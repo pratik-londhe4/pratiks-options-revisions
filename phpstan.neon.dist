@@ -2,7 +2,7 @@
 parameters:
 	level: 6
 	paths:
-		- options-revisions.php
+		- pratiks-options-revisions.php
 		- uninstall.php
 		- src
 	# Optional wp-config constants go here and in tests/phpstan-bootstrap.php.

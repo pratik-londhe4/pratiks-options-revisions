@@ -2,10 +2,10 @@
 /**
  * Base class for unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;

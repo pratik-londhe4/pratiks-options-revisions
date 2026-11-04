@@ -1,5 +1,5 @@
 /**
- * Options Revisions Admin Script
+ * Pratiks Options Revisions Admin Script
  */
 ( function( $ ) {
 	'use strict';
@@ -47,7 +47,7 @@
 			openModal( optionName );
 
 			$.post( optionsRevisionsL10n.ajaxUrl, {
-				action: 'options_revisions_get_diff',
+				action: 'pratiks_options_revisions_get_diff',
 				id: id,
 				nonce: optionsRevisionsL10n.diffNonce
 			} ).done( function( response ) {

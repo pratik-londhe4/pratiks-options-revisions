@@ -2,13 +2,13 @@
 /**
  * Option change listener and snapshot capture.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Capture;
+namespace PratikLondhe\PratiksOptionsRevisions\Capture;
 
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -105,7 +105,7 @@ class OptionListener implements Service {
 	public function should_ignore( string $option ): bool {
 		$ignored_exact = array(
 			'cron',
-			'options_revisions_db_version',
+			'pratiks_options_revisions_db_version',
 			'auth_key',
 			'secure_auth_key',
 			'logged_in_key',
@@ -128,7 +128,7 @@ class OptionListener implements Service {
 		$wildcard_prefixes = array(
 			'_transient_',
 			'_site_transient_',
-			'options_revisions_',
+			'pratiks_options_revisions_',
 			'action_scheduler_',
 			'recovery_keys_',
 		);
@@ -145,7 +145,7 @@ class OptionListener implements Service {
 		 * @param bool   $ignore Whether to ignore tracking.
 		 * @param string $option The option name.
 		 */
-		return (bool) apply_filters( 'options_revisions_should_ignore', false, $option );
+		return (bool) apply_filters( 'pratiks_options_revisions_should_ignore', false, $option );
 	}
 
 	/**
@@ -195,7 +195,7 @@ class OptionListener implements Service {
 			 * @param int    $user_id     Actor user ID.
 			 * @param int    $revision_id Inserted revision database ID.
 			 */
-			do_action( 'options_revisions_recorded', $option, $old_val, $new_val, $user_id, $revision_id );
+			do_action( 'pratiks_options_revisions_recorded', $option, $old_val, $new_val, $user_id, $revision_id );
 		}
 	}
 }

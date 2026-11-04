@@ -2,18 +2,18 @@
 /**
  * Plugin bootstrap.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions;
+namespace PratikLondhe\PratiksOptionsRevisions;
 
-use PratikLondhe\OptionsRevisions\Admin\AdminPage;
-use PratikLondhe\OptionsRevisions\Capture\OptionListener;
-use PratikLondhe\OptionsRevisions\Cli\Command;
-use PratikLondhe\OptionsRevisions\Cron\PruneTask;
-use PratikLondhe\OptionsRevisions\Health\SiteHealth;
-use PratikLondhe\OptionsRevisions\Privacy\Privacy;
-use PratikLondhe\OptionsRevisions\Storage\Database;
+use PratikLondhe\PratiksOptionsRevisions\Admin\AdminPage;
+use PratikLondhe\PratiksOptionsRevisions\Capture\OptionListener;
+use PratikLondhe\PratiksOptionsRevisions\Cli\Command;
+use PratikLondhe\PratiksOptionsRevisions\Cron\PruneTask;
+use PratikLondhe\PratiksOptionsRevisions\Health\SiteHealth;
+use PratikLondhe\PratiksOptionsRevisions\Privacy\Privacy;
+use PratikLondhe\PratiksOptionsRevisions\Storage\Database;
 
 defined( 'ABSPATH' ) || exit;
 

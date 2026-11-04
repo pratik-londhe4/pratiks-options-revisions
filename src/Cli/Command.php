@@ -2,15 +2,15 @@
 /**
  * WP-CLI command integration.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Cli;
+namespace PratikLondhe\PratiksOptionsRevisions\Cli;
 
-use PratikLondhe\OptionsRevisions\Diff\DiffEngine;
-use PratikLondhe\OptionsRevisions\Rollback\RollbackHandler;
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Diff\DiffEngine;
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -52,7 +52,7 @@ class Command implements Service {
 	 */
 	public function register(): void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			\WP_CLI::add_command( 'options-revisions', $this );
+			\WP_CLI::add_command( 'pratiks-options-revisions', $this );
 		}
 	}
 

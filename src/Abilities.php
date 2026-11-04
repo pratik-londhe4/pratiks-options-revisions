@@ -2,15 +2,15 @@
 /**
  * Abilities API integration for WordPress 6.9+ and MCP.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions;
+namespace PratikLondhe\PratiksOptionsRevisions;
 
-use PratikLondhe\OptionsRevisions\Admin\AdminPage;
-use PratikLondhe\OptionsRevisions\Diff\DiffEngine;
-use PratikLondhe\OptionsRevisions\Rollback\RollbackHandler;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Admin\AdminPage;
+use PratikLondhe\PratiksOptionsRevisions\Diff\DiffEngine;
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Abilities implements Service {
 
-	public const CATEGORY = 'options-revisions';
+	public const CATEGORY = 'pratiks-options-revisions';
 
 	/**
 	 * Repository instance.
@@ -58,7 +58,7 @@ class Abilities implements Service {
 	}
 
 	/**
-	 * Registers the options-revisions ability category.
+	 * Registers the pratiks-options-revisions ability category.
 	 */
 	public function register_category(): void {
 		if ( ! function_exists( 'wp_register_ability_category' ) ) {
@@ -68,8 +68,8 @@ class Abilities implements Service {
 		wp_register_ability_category(
 			self::CATEGORY,
 			array(
-				'label'       => __( 'Options Revisions', 'options-revisions' ),
-				'description' => __( 'Manage and rollback settings and option revisions.', 'options-revisions' ),
+				'label'       => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+				'description' => __( 'Manage and rollback settings and option revisions.', 'pratiks-options-revisions' ),
 			)
 		);
 	}
@@ -84,11 +84,11 @@ class Abilities implements Service {
 
 		// 1. List revisions.
 		wp_register_ability(
-			'options-revisions/list-revisions',
+			'pratiks-options-revisions/list-revisions',
 			array(
 				'category'            => self::CATEGORY,
-				'label'               => __( 'List Option Revisions', 'options-revisions' ),
-				'description'         => __( 'Lists recorded revisions for WordPress options.', 'options-revisions' ),
+				'label'               => __( 'List Option Revisions', 'pratiks-options-revisions' ),
+				'description'         => __( 'Lists recorded revisions for WordPress options.', 'pratiks-options-revisions' ),
 				'permission_callback' => array( $this, 'can_manage' ),
 				'execute_callback'    => array( $this, 'execute_list' ),
 				'input_schema'        => array(
@@ -126,11 +126,11 @@ class Abilities implements Service {
 
 		// 2. Get diff.
 		wp_register_ability(
-			'options-revisions/get-diff',
+			'pratiks-options-revisions/get-diff',
 			array(
 				'category'            => self::CATEGORY,
-				'label'               => __( 'Get Option Revision Diff', 'options-revisions' ),
-				'description'         => __( 'Returns the text and visual diff for a given revision ID.', 'options-revisions' ),
+				'label'               => __( 'Get Option Revision Diff', 'pratiks-options-revisions' ),
+				'description'         => __( 'Returns the text and visual diff for a given revision ID.', 'pratiks-options-revisions' ),
 				'permission_callback' => array( $this, 'can_manage' ),
 				'execute_callback'    => array( $this, 'execute_diff' ),
 				'input_schema'        => array(
@@ -163,11 +163,11 @@ class Abilities implements Service {
 
 		// 3. Rollback option.
 		wp_register_ability(
-			'options-revisions/rollback-option',
+			'pratiks-options-revisions/rollback-option',
 			array(
 				'category'            => self::CATEGORY,
-				'label'               => __( 'Rollback Option Revision', 'options-revisions' ),
-				'description'         => __( 'Restores an option to its state before a specific revision was recorded.', 'options-revisions' ),
+				'label'               => __( 'Rollback Option Revision', 'pratiks-options-revisions' ),
+				'description'         => __( 'Restores an option to its state before a specific revision was recorded.', 'pratiks-options-revisions' ),
 				'permission_callback' => array( $this, 'can_manage' ),
 				'execute_callback'    => array( $this, 'execute_rollback' ),
 				'input_schema'        => array(
@@ -237,7 +237,7 @@ class Abilities implements Service {
 		$record = $this->repository->get_by_id( $id );
 
 		if ( ! $record ) {
-			return new \WP_Error( 'not_found', __( 'Revision not found.', 'options-revisions' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'not_found', __( 'Revision not found.', 'pratiks-options-revisions' ), array( 'status' => 404 ) );
 		}
 
 		$old_text = DiffEngine::format_value( maybe_unserialize( $record->old_value ) );
@@ -265,13 +265,13 @@ class Abilities implements Service {
 		$record = $this->repository->get_by_id( $id );
 
 		if ( ! $record ) {
-			return new \WP_Error( 'not_found', __( 'Revision not found.', 'options-revisions' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'not_found', __( 'Revision not found.', 'pratiks-options-revisions' ), array( 'status' => 404 ) );
 		}
 
 		$success = $this->rollback_handler->rollback( $id );
 
 		if ( ! $success ) {
-			return new \WP_Error( 'rollback_failed', __( 'Failed to roll back option.', 'options-revisions' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'rollback_failed', __( 'Failed to roll back option.', 'pratiks-options-revisions' ), array( 'status' => 500 ) );
 		}
 
 		return array(
@@ -279,7 +279,7 @@ class Abilities implements Service {
 			'option_name' => (string) $record->option_name,
 			'message'     => sprintf(
 				/* translators: %s option name */
-				__( "Option '%s' rolled back successfully.", 'options-revisions' ),
+				__( "Option '%s' rolled back successfully.", 'pratiks-options-revisions' ),
 				$record->option_name
 			),
 		);

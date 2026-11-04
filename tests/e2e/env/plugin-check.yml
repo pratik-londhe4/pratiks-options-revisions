@@ -4,7 +4,7 @@
 services:
   wp:
     volumes:
-      - ../../../dist/options-revisions:/var/www/html/wp-content/plugins/options-revisions:ro
+      - ../../../dist/pratiks-options-revisions:/var/www/html/wp-content/plugins/pratiks-options-revisions:ro
   cli:
     volumes:
-      - ../../../dist/options-revisions:/var/www/html/wp-content/plugins/options-revisions:ro
+      - ../../../dist/pratiks-options-revisions:/var/www/html/wp-content/plugins/pratiks-options-revisions:ro

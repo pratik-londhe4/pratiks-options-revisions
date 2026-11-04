@@ -2,17 +2,17 @@
 /**
  * RollbackHandler unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
 use Mockery;
-use PratikLondhe\OptionsRevisions\Capture\OptionListener;
-use PratikLondhe\OptionsRevisions\Rollback\RollbackHandler;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Capture\OptionListener;
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 /**
  * Tests option rollback execution.
@@ -40,7 +40,7 @@ class RollbackHandlerTest extends TestCase {
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldReceive( 'get_by_id' )->with( 5 )->andReturn( $record );
 
-		Actions\expectDone( 'options_revisions_rolled_back' )
+		Actions\expectDone( 'pratiks_options_revisions_rolled_back' )
 			->once()
 			->with( 'site_desc', 'Just another site', 5 );
 
@@ -65,7 +65,7 @@ class RollbackHandlerTest extends TestCase {
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldReceive( 'get_by_id' )->with( 10 )->andReturn( $record );
 
-		Actions\expectDone( 'options_revisions_rolled_back' )
+		Actions\expectDone( 'pratiks_options_revisions_rolled_back' )
 			->once()
 			->with( 'newly_added', null, 10 );
 

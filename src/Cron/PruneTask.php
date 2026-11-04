@@ -2,13 +2,13 @@
 /**
  * Daily revision cleanup cron task.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Cron;
+namespace PratikLondhe\PratiksOptionsRevisions\Cron;
 
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class PruneTask implements Service {
 
-	public const CRON_HOOK = 'options_revisions_daily_cleanup';
+	public const CRON_HOOK = 'pratiks_options_revisions_daily_cleanup';
 
 	/**
 	 * Repository instance.
@@ -61,14 +61,14 @@ class PruneTask implements Service {
 		 *
 		 * @param int $days Number of days to retain revisions.
 		 */
-		$days = (int) apply_filters( 'options_revisions_retention_days', 30 );
+		$days = (int) apply_filters( 'pratiks_options_revisions_retention_days', 30 );
 
 		/**
 		 * Filters the maximum number of revisions stored per option.
 		 *
 		 * @param int $max_per_option Maximum count per option.
 		 */
-		$max_per_option = (int) apply_filters( 'options_revisions_max_revisions_per_option', 30 );
+		$max_per_option = (int) apply_filters( 'pratiks_options_revisions_max_revisions_per_option', 30 );
 
 		$deleted_old    = $this->repository->prune_older_than( $days );
 		$deleted_excess = $this->repository->prune_excess( $max_per_option );
@@ -80,7 +80,7 @@ class PruneTask implements Service {
 		 *
 		 * @param int $total Total number of pruned records.
 		 */
-		do_action( 'options_revisions_pruned', $total );
+		do_action( 'pratiks_options_revisions_pruned', $total );
 	}
 
 	/**

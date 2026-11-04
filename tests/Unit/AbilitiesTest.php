@@ -2,16 +2,16 @@
 /**
  * Abilities unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey\Functions;
 use Mockery;
-use PratikLondhe\OptionsRevisions\Abilities;
-use PratikLondhe\OptionsRevisions\Rollback\RollbackHandler;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Abilities;
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 /**
  * Tests Abilities API execution callbacks.

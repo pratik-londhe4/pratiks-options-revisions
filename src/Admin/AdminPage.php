@@ -2,15 +2,15 @@
 /**
  * Admin management page and AJAX endpoints.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Admin;
+namespace PratikLondhe\PratiksOptionsRevisions\Admin;
 
-use PratikLondhe\OptionsRevisions\Diff\DiffEngine;
-use PratikLondhe\OptionsRevisions\Rollback\RollbackHandler;
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Diff\DiffEngine;
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class AdminPage implements Service {
 
-	public const MENU_SLUG = 'options-revisions';
+	public const MENU_SLUG = 'pratiks-options-revisions';
 
 	/**
 	 * Repository instance.
@@ -56,7 +56,7 @@ class AdminPage implements Service {
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_init', array( $this, 'handle_rollback_action' ) );
-		add_action( 'wp_ajax_options_revisions_get_diff', array( $this, 'ajax_get_diff' ) );
+		add_action( 'wp_ajax_pratiks_options_revisions_get_diff', array( $this, 'ajax_get_diff' ) );
 	}
 
 	/**
@@ -70,16 +70,16 @@ class AdminPage implements Service {
 		 *
 		 * @param string $capability Default 'manage_options'.
 		 */
-		return (string) apply_filters( 'options_revisions_capability', 'manage_options' );
+		return (string) apply_filters( 'pratiks_options_revisions_capability', 'manage_options' );
 	}
 
 	/**
-	 * Registers Tools > Options Revisions menu.
+	 * Registers Tools > Pratiks Options Revisions menu.
 	 */
 	public function add_menu_page(): void {
 		add_management_page(
-			__( 'Options Revisions', 'options-revisions' ),
-			__( 'Options Revisions', 'options-revisions' ),
+			__( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+			__( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
 			self::capability(),
 			self::MENU_SLUG,
 			array( $this, 'render_page' )
@@ -97,29 +97,29 @@ class AdminPage implements Service {
 		}
 
 		wp_enqueue_style(
-			'options-revisions-admin',
+			'pratiks-options-revisions-admin',
 			plugins_url( 'assets/css/admin.css', dirname( __DIR__ ) ),
 			array(),
-			\PratikLondhe\OptionsRevisions\VERSION
+			\PratikLondhe\PratiksOptionsRevisions\VERSION
 		);
 
 		wp_enqueue_script(
-			'options-revisions-admin',
+			'pratiks-options-revisions-admin',
 			plugins_url( 'assets/js/admin.js', dirname( __DIR__ ) ),
 			array( 'jquery', 'wp-hooks' ),
-			\PratikLondhe\OptionsRevisions\VERSION,
+			\PratikLondhe\PratiksOptionsRevisions\VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'options-revisions-admin',
+			'pratiks-options-revisions-admin',
 			'optionsRevisionsL10n',
 			array(
 				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-				'diffNonce' => wp_create_nonce( 'options_revisions_diff_nonce' ),
-				'loading'   => __( 'Loading differences...', 'options-revisions' ),
-				'error'     => __( 'Could not load diff. Please try again.', 'options-revisions' ),
-				'close'     => __( 'Close', 'options-revisions' ),
+				'diffNonce' => wp_create_nonce( 'pratiks_options_revisions_diff_nonce' ),
+				'loading'   => __( 'Loading differences...', 'pratiks-options-revisions' ),
+				'error'     => __( 'Could not load diff. Please try again.', 'pratiks-options-revisions' ),
+				'close'     => __( 'Close', 'pratiks-options-revisions' ),
 			)
 		);
 	}
@@ -137,11 +137,11 @@ class AdminPage implements Service {
 		}
 
 		if ( ! current_user_can( self::capability() ) ) {
-			wp_die( esc_html__( 'You do not have permission to roll back options.', 'options-revisions' ) );
+			wp_die( esc_html__( 'You do not have permission to roll back options.', 'pratiks-options-revisions' ) );
 		}
 
 		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
-		check_admin_referer( 'options_revisions_rollback_' . $id );
+		check_admin_referer( 'pratiks_options_revisions_rollback_' . $id );
 
 		$success = $this->rollback_handler->rollback( $id );
 
@@ -161,17 +161,17 @@ class AdminPage implements Service {
 	 * AJAX handler for fetching diff HTML.
 	 */
 	public function ajax_get_diff(): void {
-		check_ajax_referer( 'options_revisions_diff_nonce', 'nonce' );
+		check_ajax_referer( 'pratiks_options_revisions_diff_nonce', 'nonce' );
 
 		if ( ! current_user_can( self::capability() ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'options-revisions' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'pratiks-options-revisions' ) ), 403 );
 		}
 
 		$id     = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		$record = $this->repository->get_by_id( $id );
 
 		if ( ! $record ) {
-			wp_send_json_error( array( 'message' => __( 'Revision not found.', 'options-revisions' ) ), 404 );
+			wp_send_json_error( array( 'message' => __( 'Revision not found.', 'pratiks-options-revisions' ) ), 404 );
 		}
 
 		$diff_html = DiffEngine::render_diff(
@@ -192,27 +192,27 @@ class AdminPage implements Service {
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( self::capability() ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'options-revisions' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'pratiks-options-revisions' ) );
 		}
 
 		$table = new RevisionsListTable( $this->repository );
 		$table->prepare_items();
 		?>
 		<div class="wrap optrev-wrap">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Options Revisions', 'options-revisions' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Pratiks Options Revisions', 'pratiks-options-revisions' ); ?></h1>
 			<p class="description">
-				<?php esc_html_e( 'Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.', 'options-revisions' ); ?>
+				<?php esc_html_e( 'Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.', 'pratiks-options-revisions' ); ?>
 			</p>
 
 			<?php // phpcs:disable WordPress.Security.NonceVerification.Recommended ?>
 			<?php if ( isset( $_GET['rolled'] ) ) : ?>
 				<?php if ( '1' === $_GET['rolled'] ) : ?>
 					<div class="notice notice-success is-dismissible">
-						<p><?php esc_html_e( 'Option was successfully rolled back.', 'options-revisions' ); ?></p>
+						<p><?php esc_html_e( 'Option was successfully rolled back.', 'pratiks-options-revisions' ); ?></p>
 					</div>
 				<?php else : ?>
 					<div class="notice notice-error is-dismissible">
-						<p><?php esc_html_e( 'Failed to roll back option.', 'options-revisions' ); ?></p>
+						<p><?php esc_html_e( 'Failed to roll back option.', 'pratiks-options-revisions' ); ?></p>
 					</div>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -220,7 +220,7 @@ class AdminPage implements Service {
 
 			<form method="get" action="<?php echo esc_url( admin_url( 'tools.php' ) ); ?>">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::MENU_SLUG ); ?>" />
-				<?php $table->search_box( __( 'Search Options', 'options-revisions' ), 'options_search' ); ?>
+				<?php $table->search_box( __( 'Search Options', 'pratiks-options-revisions' ), 'options_search' ); ?>
 				<?php $table->display(); ?>
 			</form>
 		</div>
@@ -230,8 +230,8 @@ class AdminPage implements Service {
 			<div class="optrev-modal-overlay"></div>
 			<div class="optrev-modal-content">
 				<div class="optrev-modal-header">
-					<h2 id="optrev-modal-title"><?php esc_html_e( 'Option Diff', 'options-revisions' ); ?></h2>
-					<button type="button" class="optrev-modal-close" aria-label="<?php esc_attr_e( 'Close', 'options-revisions' ); ?>">&times;</button>
+					<h2 id="optrev-modal-title"><?php esc_html_e( 'Option Diff', 'pratiks-options-revisions' ); ?></h2>
+					<button type="button" class="optrev-modal-close" aria-label="<?php esc_attr_e( 'Close', 'pratiks-options-revisions' ); ?>">&times;</button>
 				</div>
 				<div class="optrev-modal-body">
 					<div class="optrev-modal-spinner"></div>

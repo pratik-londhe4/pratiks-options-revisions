@@ -2,16 +2,16 @@
 /**
  * OptionListener unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
 use Mockery;
-use PratikLondhe\OptionsRevisions\Capture\OptionListener;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Capture\OptionListener;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 /**
  * Tests option change listener.
@@ -24,7 +24,7 @@ class OptionListenerTest extends TestCase {
 		$this->assertTrue( $listener->should_ignore( 'cron' ) );
 		$this->assertTrue( $listener->should_ignore( '_transient_feed_cache' ) );
 		$this->assertTrue( $listener->should_ignore( '_site_transient_update_plugins' ) );
-		$this->assertTrue( $listener->should_ignore( 'options_revisions_db_version' ) );
+		$this->assertTrue( $listener->should_ignore( 'pratiks_options_revisions_db_version' ) );
 		$this->assertTrue( $listener->should_ignore( 'auth_key' ) );
 		$this->assertFalse( $listener->should_ignore( 'blogname' ) );
 		$this->assertFalse( $listener->should_ignore( 'woocommerce_currency' ) );
@@ -59,7 +59,7 @@ class OptionListenerTest extends TestCase {
 			)
 			->andReturn( 101 );
 
-		Actions\expectDone( 'options_revisions_recorded' )
+		Actions\expectDone( 'pratiks_options_revisions_recorded' )
 			->once()
 			->with( 'blogname', 'Old Title', 'New Title', 42, 101 );
 

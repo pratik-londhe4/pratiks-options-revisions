@@ -15,7 +15,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-slug="options-revisions"
+slug="pratiks-options-revisions"
 main_file="$slug.php"
 
 header_version() {

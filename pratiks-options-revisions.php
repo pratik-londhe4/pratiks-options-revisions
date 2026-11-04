@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Options Revisions
- * Plugin URI:        https://wordpress.org/plugins/options-revisions/
+ * Plugin Name:       Pratiks Options Revisions
+ * Plugin URI:        https://wordpress.org/plugins/pratiks-options-revisions/
  * Description:       Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.
  * Version:           0.1.0
  * Requires at least: 6.6
@@ -10,19 +10,19 @@
  * Author URI:        https://profiles.wordpress.org/pratiklondhe/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       options-revisions
+ * Text Domain:       pratiks-options-revisions
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions;
+namespace PratikLondhe\PratiksOptionsRevisions;
 
 defined( 'ABSPATH' ) || exit;
 
 const VERSION     = '0.1.0';
 const PLUGIN_FILE = __FILE__;
 
-// PSR-4: PratikLondhe\OptionsRevisions\Foo\Bar lives in src/Foo/Bar.php.
+// PSR-4: PratikLondhe\PratiksOptionsRevisions\Foo\Bar lives in src/Foo/Bar.php.
 spl_autoload_register(
 	static function ( $class_name ) {
 		$prefix = __NAMESPACE__ . '\\';

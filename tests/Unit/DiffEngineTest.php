@@ -2,13 +2,13 @@
 /**
  * DiffEngine unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey\Functions;
-use PratikLondhe\OptionsRevisions\Diff\DiffEngine;
+use PratikLondhe\PratiksOptionsRevisions\Diff\DiffEngine;
 
 /**
  * Tests DiffEngine formatting and diff rendering.

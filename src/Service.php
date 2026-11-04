@@ -2,10 +2,10 @@
 /**
  * Contract for classes that hook into WordPress.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions;
+namespace PratikLondhe\PratiksOptionsRevisions;
 
 defined( 'ABSPATH' ) || exit;
 

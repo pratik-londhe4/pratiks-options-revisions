@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Options Revisions">
-	<description>WordPress coding standards for Options Revisions.</description>
+<ruleset name="Pratiks Options Revisions">
+	<description>WordPress coding standards for Pratiks Options Revisions.</description>
 
 	<file>.</file>
 	<exclude-pattern>/vendor/*</exclude-pattern>
@@ -24,7 +24,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="options-revisions"/>
+				<element value="pratiks-options-revisions"/>
 			</property>
 		</properties>
 	</rule>
@@ -32,8 +32,8 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="PratikLondhe\OptionsRevisions"/>
-				<element value="options_revisions"/>
+				<element value="PratikLondhe\PratiksOptionsRevisions"/>
+				<element value="pratiks_options_revisions"/>
 			</property>
 		</properties>
 	</rule>

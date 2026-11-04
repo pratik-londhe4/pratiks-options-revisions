@@ -2,13 +2,13 @@
 /**
  * Option rollback execution handler.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Rollback;
+namespace PratikLondhe\PratiksOptionsRevisions\Rollback;
 
-use PratikLondhe\OptionsRevisions\Capture\OptionListener;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Capture\OptionListener;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -72,7 +72,7 @@ class RollbackHandler {
 			 * @param mixed  $restored_value The value restored.
 			 * @param int    $revision_id    The revision ID rolled back.
 			 */
-			do_action( 'options_revisions_rolled_back', $option_name, $restored_value, $revision_id );
+			do_action( 'pratiks_options_revisions_rolled_back', $option_name, $restored_value, $revision_id );
 		}
 
 		return (bool) $success;

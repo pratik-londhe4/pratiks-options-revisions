@@ -1,5 +1,5 @@
 {
-  "name": "pratiklondhe/options-revisions",
+  "name": "pratiklondhe/pratiks-options-revisions",
   "description": "TODO: one line on what it does.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
@@ -25,12 +25,12 @@
   },
   "autoload": {
     "psr-4": {
-      "PratikLondhe\\OptionsRevisions\\": "src/"
+      "PratikLondhe\\PratiksOptionsRevisions\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PratikLondhe\\OptionsRevisions\\Tests\\": "tests/"
+      "PratikLondhe\\PratiksOptionsRevisions\\Tests\\": "tests/"
     }
   },
   "config": {

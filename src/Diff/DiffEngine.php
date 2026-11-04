@@ -2,10 +2,10 @@
 /**
  * Diff generation engine.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Diff;
+namespace PratikLondhe\PratiksOptionsRevisions\Diff;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -66,9 +66,9 @@ class DiffEngine {
 		$new_text = self::format_value( $new_value );
 
 		$defaults = array(
-			'title'       => __( 'Differences', 'options-revisions' ),
-			'title_left'  => __( 'Previous Value', 'options-revisions' ),
-			'title_right' => __( 'New Value', 'options-revisions' ),
+			'title'       => __( 'Differences', 'pratiks-options-revisions' ),
+			'title_left'  => __( 'Previous Value', 'pratiks-options-revisions' ),
+			'title_right' => __( 'New Value', 'pratiks-options-revisions' ),
 		);
 
 		$diff_args = wp_parse_args( $args, $defaults );
@@ -80,12 +80,12 @@ class DiffEngine {
 		 * @param mixed                $old_value
 		 * @param mixed                $new_value
 		 */
-		$diff_args = apply_filters( 'options_revisions_diff_args', $diff_args, $old_value, $new_value );
+		$diff_args = apply_filters( 'pratiks_options_revisions_diff_args', $diff_args, $old_value, $new_value );
 
 		$diff = wp_text_diff( $old_text, $new_text, $diff_args );
 
 		if ( empty( $diff ) ) {
-			$diff = '<p class="optrev-no-diff">' . esc_html__( 'No visual differences detected.', 'options-revisions' ) . '</p>';
+			$diff = '<p class="optrev-no-diff">' . esc_html__( 'No visual differences detected.', 'pratiks-options-revisions' ) . '</p>';
 		}
 
 		/**
@@ -95,6 +95,6 @@ class DiffEngine {
 		 * @param mixed  $old_value
 		 * @param mixed  $new_value
 		 */
-		return (string) apply_filters( 'options_revisions_diff_output', $diff, $old_value, $new_value );
+		return (string) apply_filters( 'pratiks_options_revisions_diff_output', $diff, $old_value, $new_value );
 	}
 }

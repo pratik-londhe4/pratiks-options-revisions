@@ -2,15 +2,15 @@
 /**
  * PruneTask unit tests.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Tests\Unit;
+namespace PratikLondhe\PratiksOptionsRevisions\Tests\Unit;
 
 use Brain\Monkey\Actions;
 use Mockery;
-use PratikLondhe\OptionsRevisions\Cron\PruneTask;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Cron\PruneTask;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 /**
  * Tests daily cron cleanup.
@@ -29,7 +29,7 @@ class PruneTaskTest extends TestCase {
 			->with( 30 )
 			->andReturn( 8 );
 
-		Actions\expectDone( 'options_revisions_pruned' )
+		Actions\expectDone( 'pratiks_options_revisions_pruned' )
 			->once()
 			->with( 20 );
 

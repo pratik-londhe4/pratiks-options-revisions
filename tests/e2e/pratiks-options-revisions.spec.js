@@ -1,16 +1,16 @@
-// End-to-end tests for Options Revisions. Check every outcome in the database through WP-CLI as well as on screen.
+// End-to-end tests for Pratiks Options Revisions. Check every outcome in the database through WP-CLI as well as on screen.
 const { test, expect } = require( '@playwright/test' );
 const { wpCli } = require( './utils/wp-cli' );
 
-test.describe( 'Options Revisions', () => {
+test.describe( 'Pratiks Options Revisions', () => {
 	test.beforeEach( async () => {
 		// Ensure plugin is active.
-		await wpCli( 'plugin activate options-revisions' );
+		await wpCli( 'plugin activate pratiks-options-revisions' );
 	} );
 
 	test( 'the plugin is active in wp-admin', async ( { page } ) => {
 		await page.goto( '/wp-admin/plugins.php' );
-		await expect( page.locator( 'tr[data-slug="options-revisions"].active' ) ).toBeVisible();
+		await expect( page.locator( 'tr[data-slug="pratiks-options-revisions"].active' ) ).toBeVisible();
 	} );
 
 	test( 'records option change and displays in tools table', async ( { page } ) => {
@@ -18,8 +18,8 @@ test.describe( 'Options Revisions', () => {
 		await wpCli( `option set ${ testOption } "Initial Value"` );
 		await wpCli( `option set ${ testOption } "Updated Value"` );
 
-		await page.goto( '/wp-admin/tools.php?page=options-revisions' );
-		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Options Revisions' );
+		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
+		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Pratiks Options Revisions' );
 		await expect( page.locator( 'table.wp-list-table' ) ).toContainText( testOption );
 
 		// Open Diff modal.
@@ -40,7 +40,7 @@ test.describe( 'Options Revisions', () => {
 		await wpCli( `option set ${ testOption } "Original Text"` );
 		await wpCli( `option set ${ testOption } "Modified Text"` );
 
-		await page.goto( '/wp-admin/tools.php?page=options-revisions' );
+		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
 
 		// Click Rollback on the most recent revision.
 		page.on( 'dialog', dialog => dialog.accept() );
@@ -59,7 +59,7 @@ test.describe( 'Options Revisions', () => {
 		const page = await context.newPage();
 
 		// Attempt to access without admin session.
-		await page.goto( '/wp-admin/tools.php?page=options-revisions' );
+		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
 		await expect( page.locator( 'body' ) ).not.toContainText( 'Search Options' );
 		await context.close();
 	} );

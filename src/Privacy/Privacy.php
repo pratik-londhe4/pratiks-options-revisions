@@ -2,13 +2,13 @@
 /**
  * Privacy policy and personal data exporter/eraser.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Privacy;
+namespace PratikLondhe\PratiksOptionsRevisions\Privacy;
 
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\Database;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\Database;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,11 +38,11 @@ class Privacy implements Service {
 			'<p>%s</p>',
 			esc_html__(
 				'This site records revisions of WordPress options and settings changes, including the user account ID and anonymized IP address of administrators who perform updates, to provide rollback and audit capabilities. Revision records are retained for a default of 30 days.',
-				'options-revisions'
+				'pratiks-options-revisions'
 			)
 		);
 
-		wp_add_privacy_policy_content( __( 'Options Revisions', 'options-revisions' ), $content );
+		wp_add_privacy_policy_content( __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ), $content );
 	}
 
 	/**
@@ -52,8 +52,8 @@ class Privacy implements Service {
 	 * @return array<string, array<string, string>>
 	 */
 	public function register_exporter( array $exporters ): array {
-		$exporters['options-revisions'] = array(
-			'exporter_friendly_name' => __( 'Options Revisions', 'options-revisions' ),
+		$exporters['pratiks-options-revisions'] = array(
+			'exporter_friendly_name' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
 			'callback'               => array( $this, 'export_user_data' ),
 		);
 		return $exporters;
@@ -97,20 +97,20 @@ class Privacy implements Service {
 		if ( is_array( $records ) ) {
 			foreach ( $records as $record ) {
 				$export_items[] = array(
-					'group_id'    => 'options_revisions',
-					'group_label' => __( 'Options Revisions', 'options-revisions' ),
+					'group_id'    => 'pratiks_options_revisions',
+					'group_label' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
 					'item_id'     => 'revision-' . $record->id,
 					'data'        => array(
 						array(
-							'name'  => __( 'Option Name', 'options-revisions' ),
+							'name'  => __( 'Option Name', 'pratiks-options-revisions' ),
 							'value' => (string) $record->option_name,
 						),
 						array(
-							'name'  => __( 'Action', 'options-revisions' ),
+							'name'  => __( 'Action', 'pratiks-options-revisions' ),
 							'value' => (string) $record->action_type,
 						),
 						array(
-							'name'  => __( 'Date', 'options-revisions' ),
+							'name'  => __( 'Date', 'pratiks-options-revisions' ),
 							'value' => (string) $record->created_at,
 						),
 					),
@@ -131,8 +131,8 @@ class Privacy implements Service {
 	 * @return array<string, array<string, string>>
 	 */
 	public function register_eraser( array $erasers ): array {
-		$erasers['options-revisions'] = array(
-			'eraser_friendly_name' => __( 'Options Revisions', 'options-revisions' ),
+		$erasers['pratiks-options-revisions'] = array(
+			'eraser_friendly_name' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
 			'callback'             => array( $this, 'erase_user_data' ),
 		);
 		return $erasers;
@@ -173,7 +173,7 @@ class Privacy implements Service {
 		return array(
 			'items_removed'  => false === $updated ? 0 : (int) $updated,
 			'items_retained' => 0,
-			'messages'       => array( __( 'Anonymized user attribution in options revisions.', 'options-revisions' ) ),
+			'messages'       => array( __( 'Anonymized user attribution in options revisions.', 'pratiks-options-revisions' ) ),
 			'done'           => true,
 		);
 	}

@@ -2,12 +2,12 @@
 /**
  * Database schema and table management.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Storage;
+namespace PratikLondhe\PratiksOptionsRevisions\Storage;
 
-use PratikLondhe\OptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Service;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,9 +16,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class Database implements Service {
 
-	public const TABLE_NAME        = 'options_revisions';
+	public const TABLE_NAME        = 'pratiks_options_revisions';
 	public const DB_VERSION        = '1.0.0';
-	public const DB_VERSION_OPTION = 'options_revisions_db_version';
+	public const DB_VERSION_OPTION = 'pratiks_options_revisions_db_version';
 
 	/**
 	 * Registers service hooks.

@@ -2,15 +2,15 @@
 /**
  * Site Health check integration.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Health;
+namespace PratikLondhe\PratiksOptionsRevisions\Health;
 
-use PratikLondhe\OptionsRevisions\Cron\PruneTask;
-use PratikLondhe\OptionsRevisions\Service;
-use PratikLondhe\OptionsRevisions\Storage\Database;
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Cron\PruneTask;
+use PratikLondhe\PratiksOptionsRevisions\Service;
+use PratikLondhe\PratiksOptionsRevisions\Storage\Database;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,8 +49,8 @@ class SiteHealth implements Service {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function register_tests( array $tests ): array {
-		$tests['direct']['options_revisions_status'] = array(
-			'label' => __( 'Options Revisions Status', 'options-revisions' ),
+		$tests['direct']['pratiks_options_revisions_status'] = array(
+			'label' => __( 'Pratiks Options Revisions Status', 'pratiks-options-revisions' ),
 			'test'  => array( $this, 'run_test' ),
 		);
 		return $tests;
@@ -70,18 +70,18 @@ class SiteHealth implements Service {
 
 		if ( ! $table_exists ) {
 			return array(
-				'label'       => __( 'Options Revisions table is missing', 'options-revisions' ),
+				'label'       => __( 'Pratiks Options Revisions table is missing', 'pratiks-options-revisions' ),
 				'status'      => 'critical',
 				'badge'       => array(
-					'label' => __( 'Database', 'options-revisions' ),
+					'label' => __( 'Database', 'pratiks-options-revisions' ),
 					'color' => 'red',
 				),
 				'description' => sprintf(
 					'<p>%s</p>',
-					esc_html__( 'The database table for tracking option revisions could not be found.', 'options-revisions' )
+					esc_html__( 'The database table for tracking option revisions could not be found.', 'pratiks-options-revisions' )
 				),
 				'actions'     => '',
-				'test'        => 'options_revisions_status',
+				'test'        => 'pratiks_options_revisions_status',
 			);
 		}
 
@@ -91,27 +91,27 @@ class SiteHealth implements Service {
 		return array(
 			'label'       => sprintf(
 				/* translators: %d total recorded revisions */
-				__( 'Options Revisions is active (%d revisions recorded)', 'options-revisions' ),
+				__( 'Pratiks Options Revisions is active (%d revisions recorded)', 'pratiks-options-revisions' ),
 				$count
 			),
 			'status'      => $cron_scheduled ? 'good' : 'recommended',
 			'badge'       => array(
-				'label' => __( 'Options Revisions', 'options-revisions' ),
+				'label' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
 				'color' => 'blue',
 			),
 			'description' => sprintf(
 				'<p>%s %s</p>',
 				sprintf(
 					/* translators: %d count */
-					esc_html__( 'Currently tracking %d option revision records.', 'options-revisions' ),
+					esc_html__( 'Currently tracking %d option revision records.', 'pratiks-options-revisions' ),
 					$count
 				),
 				$cron_scheduled
-					? esc_html__( 'Automated daily pruning is active.', 'options-revisions' )
-					: esc_html__( 'Automated pruning is not currently scheduled.', 'options-revisions' )
+					? esc_html__( 'Automated daily pruning is active.', 'pratiks-options-revisions' )
+					: esc_html__( 'Automated pruning is not currently scheduled.', 'pratiks-options-revisions' )
 			),
 			'actions'     => '',
-			'test'        => 'options_revisions_status',
+			'test'        => 'pratiks_options_revisions_status',
 		);
 	}
 }

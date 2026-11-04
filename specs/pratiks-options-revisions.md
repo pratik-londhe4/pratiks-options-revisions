@@ -1,6 +1,6 @@
-# Options Revisions (`options-revisions`)
+# Pratiks Options Revisions (`pratiks-options-revisions`)
 
-Namespace `PratikLondhe\OptionsRevisions`, prefix `options_revisions_`, CSS prefix `optrev-`. E2E port 8912.
+Namespace `PratikLondhe\PratiksOptionsRevisions`, prefix `pratiks_options_revisions_`, CSS prefix `optrev-`. E2E port 8912.
 Requires at least 6.6 and PHP 7.4.
 
 ## Problem
@@ -13,11 +13,11 @@ WordPress core provides native revisions for posts and pages, but none for site 
    - Hooks into `update_option`, `add_option`, and `delete_option`.
    - Denylist filtering: Ignores high-churn keys (`_transient_*`, `cron`, `site_transient_*`), session tokens, and security secrets (`auth_key`, passwords, nonces).
    - Human-readable serialization: Pretty-prints serialized arrays/objects into formatted JSON before diffing, allowing clean line-by-line diffs for complex plugin settings.
-   - Storage: Stored in a dedicated lightweight table `{$wpdb->prefix}options_revisions` (`id`, `option_name`, `old_value`, `new_value`, `user_id`, `created_at`, `ip_address`).
+   - Storage: Stored in a dedicated lightweight table `{$wpdb->prefix}pratiks_options_revisions` (`id`, `option_name`, `old_value`, `new_value`, `user_id`, `created_at`, `ip_address`).
    - Automatic Pruning: Daily cron job keeps the latest 30 revisions per option or 30 days of retention (both filterable).
    - Loop Guard: Prevents recursive snapshot loops when rolling back an option.
 
-2. **Admin Interface (`Tools > Options Revisions`)**:
+2. **Admin Interface (`Tools > Pratiks Options Revisions`)**:
    - Standard WordPress `WP_List_Table` displaying: Option Name, Modified Date, Modified By, Actions (*View Diff*, *Rollback*).
    - Search filter by option name and date range.
    - Visual Diff Modal: Built on WordPress core's native `wp_text_diff()` showing red/green side-by-side and unified differences.
@@ -34,32 +34,32 @@ WordPress core provides native revisions for posts and pages, but none for site 
 ## Hooks
 
 Filters:
-- `options_revisions_capability` (default `manage_options`)
-- `options_revisions_ignored_options` (add/remove options from tracking)
-- `options_revisions_max_revisions_per_option` (default 30)
-- `options_revisions_retention_days` (default 30)
-- `options_revisions_diff_output` (customize diff rendering)
+- `pratiks_options_revisions_capability` (default `manage_options`)
+- `pratiks_options_revisions_ignored_options` (add/remove options from tracking)
+- `pratiks_options_revisions_max_revisions_per_option` (default 30)
+- `pratiks_options_revisions_retention_days` (default 30)
+- `pratiks_options_revisions_diff_output` (customize diff rendering)
 
 Actions:
-- `options_revisions_recorded` (`$option_name`, `$old_value`, `$new_value`, `$user_id`)
-- `options_revisions_rolled_back` (`$option_name`, `$restored_value`, `$revision_id`)
-- `options_revisions_pruned` (`$deleted_count`)
+- `pratiks_options_revisions_recorded` (`$option_name`, `$old_value`, `$new_value`, `$user_id`)
+- `pratiks_options_revisions_rolled_back` (`$option_name`, `$restored_value`, `$revision_id`)
+- `pratiks_options_revisions_pruned` (`$deleted_count`)
 
 JS (`wp.hooks`, namespace `optionsRevisions`):
 - `optionsRevisions.onDiffOpen`, `optionsRevisions.onRollbackSuccess`
 
 ## Abilities
 
-- `options-revisions/list-revisions` (readonly)
-- `options-revisions/get-diff` (readonly)
-- `options-revisions/rollback-option` (destructive)
+- `pratiks-options-revisions/list-revisions` (readonly)
+- `pratiks-options-revisions/get-diff` (readonly)
+- `pratiks-options-revisions/rollback-option` (destructive)
 
 ## WP-CLI
 
-- `wp options-revisions list [--option=<name>] [--format=table|json|csv]`
-- `wp options-revisions diff <revision-id>`
-- `wp options-revisions rollback <revision-id> [--yes]`
-- `wp options-revisions purge [--days=<n>] [--yes]`
+- `wp pratiks-options-revisions list [--option=<name>] [--format=table|json|csv]`
+- `wp pratiks-options-revisions diff <revision-id>`
+- `wp pratiks-options-revisions rollback <revision-id> [--yes]`
+- `wp pratiks-options-revisions purge [--days=<n>] [--yes]`
 
 ## E2E ideas
 

@@ -2,10 +2,10 @@
 /**
  * Revision storage repository.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Storage;
+namespace PratikLondhe\PratiksOptionsRevisions\Storage;
 
 defined( 'ABSPATH' ) || exit;
 

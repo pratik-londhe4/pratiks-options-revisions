@@ -2,12 +2,12 @@
 /**
  * WP_List_Table implementation for options revisions.
  *
- * @package PratikLondhe\OptionsRevisions
+ * @package PratikLondhe\PratiksOptionsRevisions
  */
 
-namespace PratikLondhe\OptionsRevisions\Admin;
+namespace PratikLondhe\PratiksOptionsRevisions\Admin;
 
-use PratikLondhe\OptionsRevisions\Storage\RevisionRepository;
+use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -50,11 +50,11 @@ class RevisionsListTable extends \WP_List_Table {
 	 */
 	public function get_columns(): array {
 		return array(
-			'option_name' => __( 'Option Name', 'options-revisions' ),
-			'action_type' => __( 'Event', 'options-revisions' ),
-			'changed_by'  => __( 'Modified By', 'options-revisions' ),
-			'created_at'  => __( 'Date & Time', 'options-revisions' ),
-			'actions'     => __( 'Actions', 'options-revisions' ),
+			'option_name' => __( 'Option Name', 'pratiks-options-revisions' ),
+			'action_type' => __( 'Event', 'pratiks-options-revisions' ),
+			'changed_by'  => __( 'Modified By', 'pratiks-options-revisions' ),
+			'created_at'  => __( 'Date & Time', 'pratiks-options-revisions' ),
+			'actions'     => __( 'Actions', 'pratiks-options-revisions' ),
 		);
 	}
 
@@ -145,10 +145,10 @@ class RevisionsListTable extends \WP_List_Table {
 			if ( $user ) {
 				return esc_html( $user->display_name );
 			}
-			return sprintf( /* translators: %d user ID */ esc_html__( 'User #%d', 'options-revisions' ), $user_id );
+			return sprintf( /* translators: %d user ID */ esc_html__( 'User #%d', 'pratiks-options-revisions' ), $user_id );
 		}
 
-		return esc_html__( 'System / CLI / Guest', 'options-revisions' );
+		return esc_html__( 'System / CLI / Guest', 'pratiks-options-revisions' );
 	}
 
 	/**
@@ -180,13 +180,13 @@ class RevisionsListTable extends \WP_List_Table {
 		$diff_btn = sprintf(
 			'<button type="button" class="button button-small optrev-view-diff" data-id="%d">%s</button>',
 			$id,
-			esc_html__( 'View Diff', 'options-revisions' )
+			esc_html__( 'View Diff', 'pratiks-options-revisions' )
 		);
 
-		$rollback_nonce = wp_create_nonce( 'options_revisions_rollback_' . $id );
+		$rollback_nonce = wp_create_nonce( 'pratiks_options_revisions_rollback_' . $id );
 		$rollback_url   = add_query_arg(
 			array(
-				'page'     => 'options-revisions',
+				'page'     => 'pratiks-options-revisions',
 				'action'   => 'rollback',
 				'id'       => $id,
 				'_wpnonce' => $rollback_nonce,
@@ -198,8 +198,8 @@ class RevisionsListTable extends \WP_List_Table {
 			'<a href="%s" class="button button-small optrev-rollback-btn" data-id="%d" onclick="return confirm(\'%s\');">%s</a>',
 			esc_url( $rollback_url ),
 			$id,
-			esc_js( __( 'Are you sure you want to revert this option to its prior value?', 'options-revisions' ) ),
-			esc_html__( 'Rollback', 'options-revisions' )
+			esc_js( __( 'Are you sure you want to revert this option to its prior value?', 'pratiks-options-revisions' ) ),
+			esc_html__( 'Rollback', 'pratiks-options-revisions' )
 		);
 
 		return $diff_btn . ' ' . $rollback_btn;
