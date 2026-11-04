@@ -1,0 +1,40 @@
+<?php
+/**
+ * Plugin Name:       Options Revisions
+ * Plugin URI:        https://wordpress.org/plugins/options-revisions/
+ * Description:       TODO: one sentence on what it does.
+ * Version:           0.1.0
+ * Requires at least: 6.6
+ * Requires PHP:      7.4
+ * Author:            Pratik Londhe
+ * Author URI:        https://profiles.wordpress.org/pratiklondhe/
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       options-revisions
+ *
+ * @package PratikLondhe\OptionsRevisions
+ */
+
+namespace PratikLondhe\OptionsRevisions;
+
+defined( 'ABSPATH' ) || exit;
+
+const VERSION     = '0.1.0';
+const PLUGIN_FILE = __FILE__;
+
+// PSR-4: PratikLondhe\OptionsRevisions\Foo\Bar lives in src/Foo/Bar.php.
+spl_autoload_register(
+	static function ( $class_name ) {
+		$prefix = __NAMESPACE__ . '\\';
+		if ( 0 !== strpos( $class_name, $prefix ) ) {
+			return;
+		}
+
+		$file = __DIR__ . '/src/' . str_replace( '\\', '/', substr( $class_name, strlen( $prefix ) ) ) . '.php';
+		if ( is_readable( $file ) ) {
+			require $file;
+		}
+	}
+);
+
+add_action( 'plugins_loaded', array( Plugin::class, 'boot' ) );
