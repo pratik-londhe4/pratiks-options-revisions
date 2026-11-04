@@ -42,7 +42,7 @@ class Privacy implements Service {
 			)
 		);
 
-		wp_add_privacy_policy_content( __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ), $content );
+		wp_add_privacy_policy_content( __( 'Options Revisions', 'pratiks-options-revisions' ), $content );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Privacy implements Service {
 	 */
 	public function register_exporter( array $exporters ): array {
 		$exporters['pratiks-options-revisions'] = array(
-			'exporter_friendly_name' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+			'exporter_friendly_name' => __( 'Options Revisions', 'pratiks-options-revisions' ),
 			'callback'               => array( $this, 'export_user_data' ),
 		);
 		return $exporters;
@@ -98,7 +98,7 @@ class Privacy implements Service {
 			foreach ( $records as $record ) {
 				$export_items[] = array(
 					'group_id'    => 'pratiks_options_revisions',
-					'group_label' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+					'group_label' => __( 'Options Revisions', 'pratiks-options-revisions' ),
 					'item_id'     => 'revision-' . $record->id,
 					'data'        => array(
 						array(
@@ -132,7 +132,7 @@ class Privacy implements Service {
 	 */
 	public function register_eraser( array $erasers ): array {
 		$erasers['pratiks-options-revisions'] = array(
-			'eraser_friendly_name' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+			'eraser_friendly_name' => __( 'Options Revisions', 'pratiks-options-revisions' ),
 			'callback'             => array( $this, 'erase_user_data' ),
 		);
 		return $erasers;

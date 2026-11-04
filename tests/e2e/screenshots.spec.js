@@ -15,9 +15,9 @@ test.describe( 'Screenshots', () => {
 		wp( 'option', 'update', 'default_role', 'customer' );
 	} );
 
-	test( '1: revisions list table under Tools > Pratiks Options Revisions', async ( { page } ) => {
+	test( '1: revisions list table under Tools > Options Revisions', async ( { page } ) => {
 		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
-		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Pratiks Options Revisions' );
+		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Options Revisions' );
 		await expect( page.locator( 'table.wp-list-table' ) ).toBeVisible();
 		await shot( page, 1 );
 	} );

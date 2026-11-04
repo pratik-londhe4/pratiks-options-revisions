@@ -25,9 +25,9 @@ test( 'demo: update an option, view visual diff, and roll back in Tools', async 
 			await demo.type( titleInput, ' - Flash Promo (Unintended)' );
 			await demo.click( page.locator( '#submit' ), 1000 );
 
-			// Navigate to Tools > Pratiks Options Revisions.
+			// Navigate to Tools > Options Revisions.
 			await demo.click( page.getByRole( 'link', { name: 'Tools', exact: true } ), 500 );
-			await demo.click( page.getByRole( 'link', { name: 'Pratiks Options Revisions' } ), 1000 );
+			await demo.click( page.getByRole( 'link', { name: 'Options Revisions' } ), 1000 );
 
 			// Inspect the revisions table.
 			const table = page.locator( 'table.wp-list-table' );

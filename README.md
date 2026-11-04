@@ -92,7 +92,7 @@ add_filter( 'pratiks_options_revisions_should_ignore', function( $ignore, $optio
 
 <table>
   <tr>
-    <td width="50%" valign="top"><img src=".wordpress-org/screenshot-1.png" alt="Revisions list table under Tools > Pratiks Options Revisions"><br><sub>Revisions list table under Tools > Pratiks Options Revisions</sub></td>
+    <td width="50%" valign="top"><img src=".wordpress-org/screenshot-1.png" alt="Revisions list table under Tools > Options Revisions"><br><sub>Revisions list table under Tools > Options Revisions</sub></td>
     <td width="50%" valign="top"><img src=".wordpress-org/screenshot-2.png" alt="Unified visual diff modal showing previous and new option values"><br><sub>Unified visual diff modal showing previous and new option values</sub></td>
   </tr>
 </table>
@@ -123,7 +123,7 @@ src/
 ├── Diff/
 │   └── DiffEngine.php           JSON normalization and wp_text_diff generation
 ├── Admin/
-│   ├── AdminPage.php            Tools > Pratiks Options Revisions admin controller
+│   ├── AdminPage.php            Tools > Options Revisions admin controller
 │   └── RevisionsListTable.php   WP_List_Table for searching and filtering revisions
 ├── Rollback/
 │   └── RollbackHandler.php      safe rollback execution with recursion guards

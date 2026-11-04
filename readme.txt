@@ -31,7 +31,7 @@ Features:
 
 1. Upload the plugin files to the `/wp-content/plugins/pratiks-options-revisions` directory, or install through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Access revision logs and rollback options under Tools > Pratiks Options Revisions.
+3. Access revision logs and rollback options under Tools > Options Revisions.
 
 == Frequently Asked Questions ==
 
@@ -43,7 +43,7 @@ Yes, run `wp pratiks-options-revisions rollback <id>` using WP-CLI.
 
 == Screenshots ==
 
-1. Revisions list table under Tools > Pratiks Options Revisions.
+1. Revisions list table under Tools > Options Revisions.
 2. Unified visual diff modal showing previous and new option values.
 
 == Changelog ==

@@ -74,12 +74,12 @@ class AdminPage implements Service {
 	}
 
 	/**
-	 * Registers Tools > Pratiks Options Revisions menu.
+	 * Registers Tools > Options Revisions menu.
 	 */
 	public function add_menu_page(): void {
 		add_management_page(
-			__( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
-			__( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+			__( 'Options Revisions', 'pratiks-options-revisions' ),
+			__( 'Options Revisions', 'pratiks-options-revisions' ),
 			self::capability(),
 			self::MENU_SLUG,
 			array( $this, 'render_page' )
@@ -199,7 +199,7 @@ class AdminPage implements Service {
 		$table->prepare_items();
 		?>
 		<div class="wrap optrev-wrap">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Pratiks Options Revisions', 'pratiks-options-revisions' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Options Revisions', 'pratiks-options-revisions' ); ?></h1>
 			<p class="description">
 				<?php esc_html_e( 'Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.', 'pratiks-options-revisions' ); ?>
 			</p>

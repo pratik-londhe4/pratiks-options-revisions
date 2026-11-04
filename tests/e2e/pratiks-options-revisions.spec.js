@@ -19,7 +19,7 @@ test.describe( 'Pratiks Options Revisions', () => {
 		wp( 'option', 'update', testOption, 'Updated Value' );
 
 		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
-		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Pratiks Options Revisions' );
+		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Options Revisions' );
 		await expect( page.locator( 'table.wp-list-table' ) ).toContainText( testOption );
 
 		// Open Diff modal.

@@ -50,7 +50,7 @@ class SiteHealth implements Service {
 	 */
 	public function register_tests( array $tests ): array {
 		$tests['direct']['pratiks_options_revisions_status'] = array(
-			'label' => __( 'Pratiks Options Revisions Status', 'pratiks-options-revisions' ),
+			'label' => __( 'Options Revisions Status', 'pratiks-options-revisions' ),
 			'test'  => array( $this, 'run_test' ),
 		);
 		return $tests;
@@ -70,7 +70,7 @@ class SiteHealth implements Service {
 
 		if ( ! $table_exists ) {
 			return array(
-				'label'       => __( 'Pratiks Options Revisions table is missing', 'pratiks-options-revisions' ),
+				'label'       => __( 'Options Revisions table is missing', 'pratiks-options-revisions' ),
 				'status'      => 'critical',
 				'badge'       => array(
 					'label' => __( 'Database', 'pratiks-options-revisions' ),
@@ -91,12 +91,12 @@ class SiteHealth implements Service {
 		return array(
 			'label'       => sprintf(
 				/* translators: %d total recorded revisions */
-				__( 'Pratiks Options Revisions is active (%d revisions recorded)', 'pratiks-options-revisions' ),
+				__( 'Options Revisions is active (%d revisions recorded)', 'pratiks-options-revisions' ),
 				$count
 			),
 			'status'      => $cron_scheduled ? 'good' : 'recommended',
 			'badge'       => array(
-				'label' => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+				'label' => __( 'Options Revisions', 'pratiks-options-revisions' ),
 				'color' => 'blue',
 			),
 			'description' => sprintf(

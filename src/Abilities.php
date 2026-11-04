@@ -68,7 +68,7 @@ class Abilities implements Service {
 		wp_register_ability_category(
 			self::CATEGORY,
 			array(
-				'label'       => __( 'Pratiks Options Revisions', 'pratiks-options-revisions' ),
+				'label'       => __( 'Options Revisions', 'pratiks-options-revisions' ),
 				'description' => __( 'Manage and rollback settings and option revisions.', 'pratiks-options-revisions' ),
 			)
 		);
