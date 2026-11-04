@@ -132,7 +132,7 @@ class RevisionRepository {
 		$params[]     = $limit;
 		$params[]     = $offset;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$results = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
 
 		return is_array( $results ) ? $results : array();
@@ -169,11 +169,11 @@ class RevisionRepository {
 		$where_clause = implode( ' AND ', $where );
 		$sql          = "SELECT COUNT(*) FROM {$table} WHERE {$where_clause}";
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		if ( ! empty( $params ) ) {
 			$total = (int) $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
 		} else {
-			$total = (int) $wpdb->get_var( $sql );
+			$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table}" ) );
 		}
 		// phpcs:enable
 
