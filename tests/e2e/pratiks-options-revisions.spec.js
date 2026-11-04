@@ -1,11 +1,11 @@
 // End-to-end tests for Pratiks Options Revisions. Check every outcome in the database through WP-CLI as well as on screen.
 const { test, expect } = require( '@playwright/test' );
-const { wpCli } = require( './utils/wp-cli' );
+const { wp } = require( './utils/wp-cli' );
 
 test.describe( 'Pratiks Options Revisions', () => {
 	test.beforeEach( async () => {
 		// Ensure plugin is active.
-		await wpCli( 'plugin activate pratiks-options-revisions' );
+		wp( 'plugin', 'activate', 'pratiks-options-revisions' );
 	} );
 
 	test( 'the plugin is active in wp-admin', async ( { page } ) => {
@@ -15,8 +15,8 @@ test.describe( 'Pratiks Options Revisions', () => {
 
 	test( 'records option change and displays in tools table', async ( { page } ) => {
 		const testOption = 'e2e_test_option';
-		await wpCli( `option set ${ testOption } "Initial Value"` );
-		await wpCli( `option set ${ testOption } "Updated Value"` );
+		wp( 'option', 'update', testOption, 'Initial Value' );
+		wp( 'option', 'update', testOption, 'Updated Value' );
 
 		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
 		await expect( page.locator( '.optrev-wrap h1' ) ).toHaveText( 'Pratiks Options Revisions' );
@@ -37,20 +37,20 @@ test.describe( 'Pratiks Options Revisions', () => {
 
 	test( 'rolls back option to previous value', async ( { page } ) => {
 		const testOption = 'e2e_rollback_test';
-		await wpCli( `option set ${ testOption } "Original Text"` );
-		await wpCli( `option set ${ testOption } "Modified Text"` );
+		wp( 'option', 'update', testOption, 'Original Text' );
+		wp( 'option', 'update', testOption, 'Modified Text' );
 
 		await page.goto( '/wp-admin/tools.php?page=pratiks-options-revisions' );
 
 		// Click Rollback on the most recent revision.
-		page.on( 'dialog', dialog => dialog.accept() );
+		page.on( 'dialog', ( dialog ) => dialog.accept() );
 		const row = page.locator( `tr:has-text("${ testOption }")` ).first();
 		await row.locator( '.optrev-rollback-btn' ).click();
 
 		await expect( page.locator( '.notice-success' ) ).toContainText( 'Option was successfully rolled back' );
 
 		// Verify database value restored.
-		const restored = await wpCli( `option get ${ testOption }` );
+		const restored = wp( 'option', 'get', testOption );
 		expect( restored.trim() ).toBe( 'Original Text' );
 	} );
 

@@ -1,3 +1,5 @@
+<p align="center"><img src=".wordpress-org/icon-256x256.png" alt="" width="88"></p>
+
 <h1 align="center">Pratiks Options Revisions</h1>
 
 <p align="center">
@@ -15,6 +17,10 @@
 </p>
 
 <p align="center">Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.</p>
+
+<p align="center">
+  <img src=".github/media/demo.gif" alt="Updating a setting in wp-admin, viewing the unified visual diff, and rolling back with one click" width="880">
+</p>
 
 ---
 
@@ -81,6 +87,15 @@ add_filter( 'pratiks_options_revisions_should_ignore', function( $ignore, $optio
     return str_starts_with( $option, 'my_app_cache_' ) ? true : $ignore;
 }, 10, 2 );
 ```
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%" valign="top"><img src=".wordpress-org/screenshot-1.png" alt="Revisions list table under Tools > Pratiks Options Revisions"><br><sub>Revisions list table under Tools > Pratiks Options Revisions</sub></td>
+    <td width="50%" valign="top"><img src=".wordpress-org/screenshot-2.png" alt="Unified visual diff modal showing previous and new option values"><br><sub>Unified visual diff modal showing previous and new option values</sub></td>
+  </tr>
+</table>
 
 ## Documentation
 

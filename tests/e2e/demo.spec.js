@@ -1,15 +1,15 @@
 // Records .github/media/demo.gif for the README. Run on demand: npm run demo
 const { test, expect } = require( '@playwright/test' );
-const { wpCli } = require( './utils/wp-cli' );
+const { wp } = require( './utils/wp-cli' );
 const { prepareSite, recordDemo } = require( './utils/media' );
 
 test( 'demo: update an option, view visual diff, and roll back in Tools', async ( { browser } ) => {
 	test.setTimeout( 180_000 );
-	prepareSite( 'Production Site' );
+	prepareSite( 'Production Store' );
 
 	// Seed an initial option state.
-	await wpCli( 'option update blogname "My Production Store"' );
-	await wpCli( 'option update blogname "My Production Store - Spring Sale"' );
+	wp( 'option', 'update', 'blogname', 'My Production Store' );
+	wp( 'option', 'update', 'blogname', 'My Production Store - Spring Sale' );
 
 	await recordDemo(
 		browser,
@@ -48,8 +48,7 @@ test( 'demo: update an option, view visual diff, and roll back in Tools', async 
 			await demo.pause( 600 );
 
 			// Click Rollback.
-			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await demo.click( latestRow.locator( '.optrev-rollback-btn' ), 1200 );
+			await demo.click( latestRow.locator( '.optrev-rollback-btn' ), 1500 );
 
 			// Success notice is visible.
 			await expect( page.locator( '.notice-success' ) ).toBeVisible();

@@ -1,7 +1,7 @@
 // Regenerates .wordpress-org/screenshot-N.png (readme.txt "== Screenshots ==" and README.md).
 // Run on demand: npm run screenshots
 const { test, expect } = require( '@playwright/test' );
-const { wpCli } = require( './utils/wp-cli' );
+const { wp } = require( './utils/wp-cli' );
 const { prepareSite, shot } = require( './utils/media' );
 
 test.describe( 'Screenshots', () => {
@@ -9,10 +9,10 @@ test.describe( 'Screenshots', () => {
 
 	test.beforeAll( async () => {
 		prepareSite( 'Production Site' );
-		await wpCli( 'option update blogname "My Production Store"' );
-		await wpCli( 'option update blogname "My Production Store - Spring Sale"' );
-		await wpCli( 'option update default_role "subscriber"' );
-		await wpCli( 'option update default_role "customer"' );
+		wp( 'option', 'update', 'blogname', 'My Production Store' );
+		wp( 'option', 'update', 'blogname', 'My Production Store - Spring Sale' );
+		wp( 'option', 'update', 'default_role', 'subscriber' );
+		wp( 'option', 'update', 'default_role', 'customer' );
 	} );
 
 	test( '1: revisions list table under Tools > Pratiks Options Revisions', async ( { page } ) => {

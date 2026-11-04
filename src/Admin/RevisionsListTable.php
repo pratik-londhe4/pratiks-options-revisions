@@ -85,6 +85,11 @@ class RevisionsListTable extends \WP_List_Table {
 			'order'  => 'DESC',
 		);
 
+		$columns               = $this->get_columns();
+		$hidden                = array();
+		$sortable              = $this->get_sortable_columns();
+		$this->_column_headers = array( $columns, $hidden, $sortable );
+
 		$total_items = $this->repository->count( array( 'search' => $search ) );
 		$this->items = $this->repository->query( $args );
 
