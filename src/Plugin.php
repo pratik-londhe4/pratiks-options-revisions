@@ -7,6 +7,14 @@
 
 namespace PratikLondhe\OptionsRevisions;
 
+use PratikLondhe\OptionsRevisions\Admin\AdminPage;
+use PratikLondhe\OptionsRevisions\Capture\OptionListener;
+use PratikLondhe\OptionsRevisions\Cli\Command;
+use PratikLondhe\OptionsRevisions\Cron\PruneTask;
+use PratikLondhe\OptionsRevisions\Health\SiteHealth;
+use PratikLondhe\OptionsRevisions\Privacy\Privacy;
+use PratikLondhe\OptionsRevisions\Storage\Database;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -46,11 +54,20 @@ final class Plugin {
 	 * @return Service[]
 	 */
 	private function services(): array {
-		return array();
+		return array(
+			new Database(),
+			new OptionListener(),
+			new AdminPage(),
+			new PruneTask(),
+			new Command(),
+			new Abilities(),
+			new Privacy(),
+			new SiteHealth(),
+		);
 	}
 
 	/**
-	 * Registers every service.
+	 * Registers every service with WordPress.
 	 */
 	private function register(): void {
 		foreach ( $this->services() as $service ) {

@@ -35,6 +35,29 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 		$this->options     = array();
 		\WP_Query::$queue = array();
 		\WP_Query::$made  = array();
+		Functions\when( 'wp_parse_args' )->alias(
+			function ( $args, $defaults = array() ) {
+				$r = is_array( $args ) ? $args : array();
+				return is_array( $defaults ) ? array_merge( $defaults, $r ) : $r;
+			}
+		);
+
+		Functions\when( 'is_serialized' )->alias(
+			function ( $data ) {
+				if ( ! is_string( $data ) ) {
+					return false;
+				}
+				$data = trim( $data );
+				if ( 'N;' === $data ) {
+					return true;
+				}
+				if ( strlen( $data ) < 4 || ':' !== $data[1] ) {
+					return false;
+				}
+				return false !== @unserialize( $data );
+			}
+		);
+
 		Functions\when( 'get_option' )->alias(
 			function ( $name, $default = false ) {
 				return array_key_exists( $name, $this->options ) ? $this->options[ $name ] : $default;

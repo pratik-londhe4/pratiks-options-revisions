@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Options Revisions
  * Plugin URI:        https://wordpress.org/plugins/options-revisions/
- * Description:       TODO: one sentence on what it does.
+ * Description:       Track settings changes, compare unified diffs, and roll back any WordPress or plugin option with one click.
  * Version:           0.1.0
  * Requires at least: 6.6
  * Requires PHP:      7.4
@@ -34,6 +34,21 @@ spl_autoload_register(
 		if ( is_readable( $file ) ) {
 			require $file;
 		}
+	}
+);
+
+register_activation_hook(
+	PLUGIN_FILE,
+	static function () {
+		Storage\Database::install();
+		Cron\PruneTask::maybe_schedule_cron();
+	}
+);
+
+register_deactivation_hook(
+	PLUGIN_FILE,
+	static function () {
+		Cron\PruneTask::unschedule();
 	}
 );
 
