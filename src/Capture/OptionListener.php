@@ -25,6 +25,13 @@ class OptionListener implements Service {
 	public static bool $is_restoring = false;
 
 	/**
+	 * Temporary store for option values prior to deletion.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private array $pre_delete_cache = array();
+
+	/**
 	 * Repository instance.
 	 *
 	 * @var RevisionRepository
@@ -46,6 +53,7 @@ class OptionListener implements Service {
 	public function register(): void {
 		add_action( 'updated_option', array( $this, 'on_updated_option' ), 10, 3 );
 		add_action( 'added_option', array( $this, 'on_added_option' ), 10, 2 );
+		add_action( 'delete_option', array( $this, 'on_delete_option' ), 10, 1 );
 		add_action( 'deleted_option', array( $this, 'on_deleted_option' ), 10, 1 );
 	}
 
@@ -84,16 +92,37 @@ class OptionListener implements Service {
 	}
 
 	/**
-	 * Handles deleted_option action.
+	 * Handles delete_option action before an option is removed.
+	 *
+	 * Captures the current value so that a deletion event retains the previous state for rollback.
+	 *
+	 * @param string $option Option name.
+	 */
+	public function on_delete_option( string $option ): void {
+		if ( self::$is_restoring || $this->should_ignore( $option ) ) {
+			return;
+		}
+
+		$this->pre_delete_cache[ $option ] = get_option( $option );
+	}
+
+	/**
+	 * Handles deleted_option action once deletion has completed.
 	 *
 	 * @param string $option Option name.
 	 */
 	public function on_deleted_option( string $option ): void {
 		if ( self::$is_restoring || $this->should_ignore( $option ) ) {
+			unset( $this->pre_delete_cache[ $option ] );
 			return;
 		}
 
-		$this->record_change( $option, null, null, 'deleted' );
+		$old_val = array_key_exists( $option, $this->pre_delete_cache )
+			? $this->pre_delete_cache[ $option ]
+			: null;
+		unset( $this->pre_delete_cache[ $option ] );
+
+		$this->record_change( $option, $old_val, null, 'deleted' );
 	}
 
 	/**

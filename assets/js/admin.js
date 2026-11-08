@@ -13,14 +13,14 @@
 
 		function openModal( optionName ) {
 			previousActiveElement = document.activeElement;
-			$modalTitle.text( optionName + ' - ' + optionsRevisionsL10n.loading );
+			$modalTitle.text( optionName + ' - ' + pratiksOptionsRevisionsL10n.loading );
 			$modalDiff.empty();
 			$modalSpinner.show();
 			$modal.fadeIn( 150 );
 			$modal.find( '.optrev-modal-close' ).focus();
 
 			if ( window.wp && window.wp.hooks ) {
-				window.wp.hooks.doAction( 'optionsRevisions.onDiffOpen', optionName );
+				window.wp.hooks.doAction( 'pratiksOptionsRevisions.onDiffOpen', optionName );
 			}
 		}
 
@@ -33,7 +33,7 @@
 			} );
 
 			if ( window.wp && window.wp.hooks ) {
-				window.wp.hooks.doAction( 'optionsRevisions.onDiffClose' );
+				window.wp.hooks.doAction( 'pratiksOptionsRevisions.onDiffClose' );
 			}
 		}
 
@@ -46,21 +46,21 @@
 
 			openModal( optionName );
 
-			$.post( optionsRevisionsL10n.ajaxUrl, {
+			$.post( pratiksOptionsRevisionsL10n.ajaxUrl, {
 				action: 'pratiks_options_revisions_get_diff',
 				id: id,
-				nonce: optionsRevisionsL10n.diffNonce
+				nonce: pratiksOptionsRevisionsL10n.diffNonce
 			} ).done( function( response ) {
 				$modalSpinner.hide();
 				if ( response.success && response.data ) {
 					$modalTitle.text( response.data.option );
 					$modalDiff.html( response.data.diff_html );
 				} else {
-					$modalDiff.html( '<p class="notice notice-error">' + optionsRevisionsL10n.error + '</p>' );
+					$modalDiff.html( '<p class="notice notice-error">' + pratiksOptionsRevisionsL10n.error + '</p>' );
 				}
 			} ).fail( function() {
 				$modalSpinner.hide();
-				$modalDiff.html( '<p class="notice notice-error">' + optionsRevisionsL10n.error + '</p>' );
+				$modalDiff.html( '<p class="notice notice-error">' + pratiksOptionsRevisionsL10n.error + '</p>' );
 			} );
 		} );
 

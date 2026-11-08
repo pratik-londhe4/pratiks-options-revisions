@@ -59,4 +59,37 @@ class AbilitiesTest extends TestCase {
 		$this->assertTrue( $result['success'] );
 		$this->assertSame( 'active_plugins', $result['option_name'] );
 	}
+
+	public function test_can_rollback_denies_active_plugins_without_permission(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'activate_plugins' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 7;
+		$record->option_name = 'active_plugins';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 7 )->andReturn( $record );
+
+		$abilities = new Abilities( $repository );
+		$this->assertFalse( $abilities->can_rollback( array( 'id' => 7 ) ) );
+	}
+
+	public function test_can_rollback_allows_regular_option(): void {
+		$record              = new \stdClass();
+		$record->id          = 8;
+		$record->option_name = 'blogname';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 8 )->andReturn( $record );
+
+		$abilities = new Abilities( $repository );
+		$this->assertTrue( $abilities->can_rollback( array( 'id' => 8 ) ) );
+	}
 }

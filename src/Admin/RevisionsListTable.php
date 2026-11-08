@@ -7,6 +7,7 @@
 
 namespace PratikLondhe\PratiksOptionsRevisions\Admin;
 
+use PratikLondhe\PratiksOptionsRevisions\Rollback\RollbackHandler;
 use PratikLondhe\PratiksOptionsRevisions\Storage\RevisionRepository;
 
 defined( 'ABSPATH' ) || exit;
@@ -187,6 +188,10 @@ class RevisionsListTable extends \WP_List_Table {
 			$id,
 			esc_html__( 'View Diff', 'pratiks-options-revisions' )
 		);
+
+		if ( ! RollbackHandler::can_user_rollback_option( (string) $item->option_name ) ) {
+			return $diff_btn;
+		}
 
 		$rollback_nonce = wp_create_nonce( 'pratiks_options_revisions_rollback_' . $id );
 		$rollback_url   = add_query_arg(

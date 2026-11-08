@@ -168,7 +168,7 @@ class Abilities implements Service {
 				'category'            => self::CATEGORY,
 				'label'               => __( 'Rollback Option Revision', 'pratiks-options-revisions' ),
 				'description'         => __( 'Restores an option to its state before a specific revision was recorded.', 'pratiks-options-revisions' ),
-				'permission_callback' => array( $this, 'can_manage' ),
+				'permission_callback' => array( $this, 'can_rollback' ),
 				'execute_callback'    => array( $this, 'execute_rollback' ),
 				'input_schema'        => array(
 					'type'       => 'object',
@@ -205,6 +205,29 @@ class Abilities implements Service {
 	 */
 	public function can_manage(): bool {
 		return current_user_can( AdminPage::capability() );
+	}
+
+	/**
+	 * Permission check for rollback ability.
+	 *
+	 * Requires manage_options in general, and activate_plugins if rolling back active_plugins.
+	 *
+	 * @param array<string, mixed>|null $input Optional ability input data.
+	 * @return bool
+	 */
+	public function can_rollback( ?array $input = null ): bool {
+		if ( ! $this->can_manage() ) {
+			return false;
+		}
+
+		if ( is_array( $input ) && ! empty( $input['id'] ) ) {
+			$record = $this->repository->get_by_id( absint( $input['id'] ) );
+			if ( $record ) {
+				return RollbackHandler::can_user_rollback_option( (string) $record->option_name );
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -266,6 +289,10 @@ class Abilities implements Service {
 
 		if ( ! $record ) {
 			return new \WP_Error( 'not_found', __( 'Revision not found.', 'pratiks-options-revisions' ), array( 'status' => 404 ) );
+		}
+
+		if ( ! RollbackHandler::can_user_rollback_option( (string) $record->option_name ) ) {
+			return new \WP_Error( 'forbidden', __( 'You do not have permission to roll back this option.', 'pratiks-options-revisions' ), array( 'status' => 403 ) );
 		}
 
 		$success = $this->rollback_handler->rollback( $id );

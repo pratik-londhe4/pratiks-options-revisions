@@ -75,4 +75,75 @@ class RollbackHandlerTest extends TestCase {
 		$this->assertTrue( $result );
 		$this->assertFalse( get_option( 'newly_added' ) );
 	}
+
+	public function test_rollback_restores_option_if_originally_deleted(): void {
+		Functions\when( 'maybe_unserialize' )->returnArg();
+
+		$record              = new \stdClass();
+		$record->id          = 15;
+		$record->option_name = 'restored_key';
+		$record->old_value   = 'saved_before_deletion';
+		$record->new_value   = null;
+		$record->action_type = 'deleted';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 15 )->andReturn( $record );
+
+		Actions\expectDone( 'pratiks_options_revisions_rolled_back' )
+			->once()
+			->with( 'restored_key', 'saved_before_deletion', 15 );
+
+		$handler = new RollbackHandler( $repository );
+		$result  = $handler->rollback( 15 );
+
+		$this->assertTrue( $result );
+		$this->assertSame( 'saved_before_deletion', get_option( 'restored_key' ) );
+	}
+
+	public function test_rollback_fails_if_deleted_record_has_no_prior_value(): void {
+		update_option( 'recreated_option', 'current_value' );
+
+		$record              = new \stdClass();
+		$record->id          = 16;
+		$record->option_name = 'recreated_option';
+		$record->old_value   = null;
+		$record->new_value   = null;
+		$record->action_type = 'deleted';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 16 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$result  = $handler->rollback( 16 );
+
+		$this->assertFalse( $result );
+		// Ensure it was NOT deleted!
+		$this->assertSame( 'current_value', get_option( 'recreated_option' ) );
+	}
+
+	public function test_rollback_active_plugins_requires_activate_plugins_capability(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'activate_plugins' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 20;
+		$record->option_name = 'active_plugins';
+		$record->old_value   = serialize( array( 'akismet/akismet.php' ) );
+		$record->new_value   = serialize( array() );
+		$record->action_type = 'updated';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 20 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$result  = $handler->rollback( 20 );
+
+		$this->assertFalse( $result );
+	}
 }

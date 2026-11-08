@@ -45,8 +45,8 @@ Actions:
 - `pratiks_options_revisions_rolled_back` (`$option_name`, `$restored_value`, `$revision_id`)
 - `pratiks_options_revisions_pruned` (`$deleted_count`)
 
-JS (`wp.hooks`, namespace `optionsRevisions`):
-- `optionsRevisions.onDiffOpen`, `optionsRevisions.onRollbackSuccess`
+JS (`wp.hooks`, namespace `pratiksOptionsRevisions`):
+- `pratiksOptionsRevisions.onDiffOpen`, `pratiksOptionsRevisions.onDiffClose`
 
 ## Abilities
 

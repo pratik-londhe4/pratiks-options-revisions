@@ -84,6 +84,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 				return true;
 			}
 		);
+		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( 'is_multisite' )->justReturn( false );
 	}
 
 	protected function tearDown(): void {

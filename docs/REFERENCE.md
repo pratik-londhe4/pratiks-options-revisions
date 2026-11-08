@@ -71,10 +71,10 @@ add_filter( 'pratiks_options_revisions_should_ignore', function( $ignore, $optio
 
 ### JavaScript Hooks (`wp.hooks`)
 
-Namespace: `optionsRevisions`
+Namespace: `pratiksOptionsRevisions`
 
-* **`optionsRevisions.onDiffOpen`**: Action fired when the diff modal opens for an option.
-* **`optionsRevisions.onDiffClose`**: Action fired when the diff modal closes.
+* **`pratiksOptionsRevisions.onDiffOpen`**: Action fired when the diff modal opens for an option.
+* **`pratiksOptionsRevisions.onDiffClose`**: Action fired when the diff modal closes.
 
 ---
 

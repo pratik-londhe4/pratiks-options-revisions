@@ -67,6 +67,38 @@ class OptionListenerTest extends TestCase {
 		$listener->on_updated_option( 'blogname', 'Old Title', 'New Title' );
 	}
 
+	public function test_on_deleted_option_captures_pre_delete_value(): void {
+		Functions\when( 'get_current_user_id' )->justReturn( 10 );
+		Functions\when( 'current_time' )->justReturn( '2026-11-08 12:00:00' );
+		Functions\when( 'maybe_serialize' )->returnArg();
+
+		update_option( 'deprecated_opt', 'Goodbye World' );
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'insert' )
+			->once()
+			->with(
+				Mockery::on(
+					function ( $data ) {
+						return 'deprecated_opt' === $data['option_name']
+							&& 'Goodbye World' === $data['old_value']
+							&& is_null( $data['new_value'] )
+							&& 'deleted' === $data['action_type'];
+					}
+				)
+			)
+			->andReturn( 102 );
+
+		Actions\expectDone( 'pratiks_options_revisions_recorded' )
+			->once()
+			->with( 'deprecated_opt', 'Goodbye World', null, 10, 102 );
+
+		$listener = new OptionListener( $repository );
+		$listener->on_delete_option( 'deprecated_opt' );
+		delete_option( 'deprecated_opt' );
+		$listener->on_deleted_option( 'deprecated_opt' );
+	}
+
 	public function test_on_updated_option_ignores_when_is_restoring(): void {
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldNotReceive( 'insert' );

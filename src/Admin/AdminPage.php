@@ -113,7 +113,7 @@ class AdminPage implements Service {
 
 		wp_localize_script(
 			'pratiks-options-revisions-admin',
-			'optionsRevisionsL10n',
+			'pratiksOptionsRevisionsL10n',
 			array(
 				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
 				'diffNonce' => wp_create_nonce( 'pratiks_options_revisions_diff_nonce' ),
@@ -142,6 +142,15 @@ class AdminPage implements Service {
 
 		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 		check_admin_referer( 'pratiks_options_revisions_rollback_' . $id );
+
+		$record = $this->repository->get_by_id( $id );
+		if ( ! $record ) {
+			wp_die( esc_html__( 'Revision not found.', 'pratiks-options-revisions' ) );
+		}
+
+		if ( ! RollbackHandler::can_user_rollback_option( (string) $record->option_name ) ) {
+			wp_die( esc_html__( 'You do not have permission to roll back this option.', 'pratiks-options-revisions' ) );
+		}
 
 		$success = $this->rollback_handler->rollback( $id );
 
