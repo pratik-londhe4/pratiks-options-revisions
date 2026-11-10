@@ -39,17 +39,58 @@ spl_autoload_register(
 
 register_activation_hook(
 	PLUGIN_FILE,
-	static function () {
-		Storage\Database::install();
-		Cron\PruneTask::maybe_schedule_cron();
+	static function ( $network_wide ) {
+		if ( is_multisite() && $network_wide ) {
+			$sites = get_sites( array( 'fields' => 'ids' ) );
+			foreach ( $sites as $site_id ) {
+				switch_to_blog( $site_id );
+				Storage\Database::install();
+				Cron\PruneTask::maybe_schedule_cron();
+				restore_current_blog();
+			}
+		} else {
+			Storage\Database::install();
+			Cron\PruneTask::maybe_schedule_cron();
+		}
 	}
 );
 
 register_deactivation_hook(
 	PLUGIN_FILE,
-	static function () {
-		Cron\PruneTask::unschedule();
+	static function ( $network_wide ) {
+		if ( is_multisite() && $network_wide ) {
+			$sites = get_sites( array( 'fields' => 'ids' ) );
+			foreach ( $sites as $site_id ) {
+				switch_to_blog( $site_id );
+				Cron\PruneTask::unschedule();
+				restore_current_blog();
+			}
+		} else {
+			Cron\PruneTask::unschedule();
+		}
 	}
 );
 
 add_action( 'plugins_loaded', array( Plugin::class, 'boot' ) );
+
+// When a new site is created on multisite, set up the table for it.
+add_action(
+	'wp_initialize_site',
+	static function ( $new_site ) {
+		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( ! is_plugin_active_for_network( plugin_basename( PLUGIN_FILE ) ) ) {
+			return;
+		}
+
+		$blog_id = isset( $new_site->blog_id ) ? (int) $new_site->blog_id : (int) $new_site->id;
+		switch_to_blog( $blog_id );
+		Storage\Database::install();
+		Cron\PruneTask::maybe_schedule_cron();
+		restore_current_blog();
+	},
+	10,
+	1
+);

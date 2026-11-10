@@ -168,6 +168,33 @@ class OptionListener implements Service {
 			}
 		}
 
+		// Exclude user roles (single site and multisite prefixed: e.g. wp_user_roles, wp_2_user_roles).
+		if ( false !== strpos( $option, 'user_roles' ) ) {
+			return true;
+		}
+
+		// Exclude options containing secrets, tokens, credentials, and API keys.
+		$sensitive_patterns = array(
+			'api_key',
+			'apikey',
+			'secret',
+			'password',
+			'token',
+			'private_key',
+			'license_key',
+			'credential',
+			'auth_key',
+			'salt',
+			'ai_connector',
+		);
+
+		$lower = strtolower( $option );
+		foreach ( $sensitive_patterns as $pattern ) {
+			if ( false !== strpos( $lower, $pattern ) ) {
+				return true;
+			}
+		}
+
 		/**
 		 * Filters whether a given option should be excluded from revision capture.
 		 *

@@ -26,6 +26,12 @@ class OptionListenerTest extends TestCase {
 		$this->assertTrue( $listener->should_ignore( '_site_transient_update_plugins' ) );
 		$this->assertTrue( $listener->should_ignore( 'pratiks_options_revisions_db_version' ) );
 		$this->assertTrue( $listener->should_ignore( 'auth_key' ) );
+		$this->assertTrue( $listener->should_ignore( 'wp_user_roles' ) );
+		$this->assertTrue( $listener->should_ignore( 'wp_2_user_roles' ) );
+		$this->assertTrue( $listener->should_ignore( 'ai_connector_api_key' ) );
+		$this->assertTrue( $listener->should_ignore( 'my_service_secret' ) );
+		$this->assertTrue( $listener->should_ignore( 'auth_token' ) );
+		$this->assertTrue( $listener->should_ignore( 'smtp_password' ) );
 		$this->assertFalse( $listener->should_ignore( 'blogname' ) );
 		$this->assertFalse( $listener->should_ignore( 'woocommerce_currency' ) );
 	}

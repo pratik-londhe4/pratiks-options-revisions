@@ -222,9 +222,10 @@ class Abilities implements Service {
 
 		if ( is_array( $input ) && ! empty( $input['id'] ) ) {
 			$record = $this->repository->get_by_id( absint( $input['id'] ) );
-			if ( $record ) {
-				return RollbackHandler::can_user_rollback_option( (string) $record->option_name );
+			if ( ! $record ) {
+				return false;
 			}
+			return RollbackHandler::can_user_rollback_option( (string) $record->option_name );
 		}
 
 		return true;

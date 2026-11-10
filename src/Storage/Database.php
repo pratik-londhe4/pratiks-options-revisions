@@ -24,7 +24,7 @@ class Database implements Service {
 	 * Registers service hooks.
 	 */
 	public function register(): void {
-		add_action( 'plugins_loaded', array( $this, 'maybe_upgrade' ) );
+		add_action( 'init', array( $this, 'maybe_upgrade' ) );
 	}
 
 	/**

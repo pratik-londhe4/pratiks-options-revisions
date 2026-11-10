@@ -92,4 +92,46 @@ class AbilitiesTest extends TestCase {
 		$abilities = new Abilities( $repository );
 		$this->assertTrue( $abilities->can_rollback( array( 'id' => 8 ) ) );
 	}
+
+	public function test_can_rollback_denies_stylesheet_without_switch_themes(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'switch_themes' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 9;
+		$record->option_name = 'stylesheet';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 9 )->andReturn( $record );
+
+		$abilities = new Abilities( $repository );
+		$this->assertFalse( $abilities->can_rollback( array( 'id' => 9 ) ) );
+	}
+
+	public function test_can_rollback_denies_prefixed_user_roles_without_promote_users(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'promote_users' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 11;
+		$record->option_name = 'wp_2_user_roles';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 11 )->andReturn( $record );
+
+		$abilities = new Abilities( $repository );
+		$this->assertFalse( $abilities->can_rollback( array( 'id' => 11 ) ) );
+	}
 }

@@ -146,4 +146,52 @@ class RollbackHandlerTest extends TestCase {
 
 		$this->assertFalse( $result );
 	}
+
+	public function test_rollback_stylesheet_requires_switch_themes_capability(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'switch_themes' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 21;
+		$record->option_name = 'stylesheet';
+		$record->old_value   = 'twentytwentythree';
+		$record->new_value   = 'twentytwentyfour';
+		$record->action_type = 'updated';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 21 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( $handler->rollback( 21 ) );
+	}
+
+	public function test_rollback_prefixed_user_roles_requires_promote_users_capability(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'promote_users' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 22;
+		$record->option_name = 'wp_2_user_roles';
+		$record->old_value   = serialize( array( 'administrator' => array() ) );
+		$record->new_value   = serialize( array() );
+		$record->action_type = 'updated';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 22 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( $handler->rollback( 22 ) );
+	}
 }
