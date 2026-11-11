@@ -132,6 +132,10 @@ class OptionListener implements Service {
 	 * @return bool
 	 */
 	public function should_ignore( string $option ): bool {
+		if ( function_exists( 'wp_installing' ) && wp_installing() ) {
+			return true;
+		}
+
 		$ignored_exact = array(
 			'cron',
 			'pratiks_options_revisions_db_version',

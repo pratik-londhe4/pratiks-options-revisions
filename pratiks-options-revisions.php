@@ -73,7 +73,7 @@ register_deactivation_hook(
 
 add_action( 'plugins_loaded', array( Plugin::class, 'boot' ) );
 
-// When a new site is created on multisite, set up the table for it.
+// When a new site is created on multisite, set up the table for it after core tables are created.
 add_action(
 	'wp_initialize_site',
 	static function ( $new_site ) {
@@ -91,6 +91,6 @@ add_action(
 		Cron\PruneTask::maybe_schedule_cron();
 		restore_current_blog();
 	},
-	10,
+	20,
 	1
 );
