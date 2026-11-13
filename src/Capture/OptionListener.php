@@ -65,12 +65,17 @@ class OptionListener implements Service {
 	 * @param mixed  $value     New option value.
 	 */
 	public function on_updated_option( string $option, $old_value, $value ): void {
-		if ( self::$is_restoring || $this->should_ignore( $option ) ) {
+		if ( self::$is_restoring || $this->should_ignore( $option, $value ) ) {
 			return;
 		}
 
 		// Don't record if values are identical.
 		if ( $old_value === $value ) {
+			return;
+		}
+
+		// Don't record if either old or new value contains sensitive credentials.
+		if ( self::contains_sensitive_data( $old_value ) || self::contains_sensitive_data( $value ) ) {
 			return;
 		}
 
@@ -84,7 +89,12 @@ class OptionListener implements Service {
 	 * @param mixed  $value  New option value.
 	 */
 	public function on_added_option( string $option, $value ): void {
-		if ( self::$is_restoring || $this->should_ignore( $option ) ) {
+		if ( self::$is_restoring || $this->should_ignore( $option, $value ) ) {
+			return;
+		}
+
+		// Don't record if value contains sensitive credentials.
+		if ( self::contains_sensitive_data( $value ) ) {
 			return;
 		}
 
@@ -94,7 +104,8 @@ class OptionListener implements Service {
 	/**
 	 * Handles delete_option action before an option is removed.
 	 *
-	 * Captures the current value so that a deletion event retains the previous state for rollback.
+	 * Captures the current value so that a deletion event retains the previous state for rollback,
+	 * provided the value does not contain embedded credentials or secrets.
 	 *
 	 * @param string $option Option name.
 	 */
@@ -103,7 +114,14 @@ class OptionListener implements Service {
 			return;
 		}
 
-		$this->pre_delete_cache[ $option ] = get_option( $option );
+		$value = get_option( $option );
+
+		// Do not retain deleted options that contain credentials embedded in settings arrays.
+		if ( self::contains_sensitive_data( $value ) ) {
+			return;
+		}
+
+		$this->pre_delete_cache[ $option ] = $value;
 	}
 
 	/**
@@ -117,10 +135,17 @@ class OptionListener implements Service {
 			return;
 		}
 
-		$old_val = array_key_exists( $option, $this->pre_delete_cache )
-			? $this->pre_delete_cache[ $option ]
-			: null;
+		if ( ! array_key_exists( $option, $this->pre_delete_cache ) ) {
+			return;
+		}
+
+		$old_val = $this->pre_delete_cache[ $option ];
 		unset( $this->pre_delete_cache[ $option ] );
+
+		// Do not retain deleted options with embedded credentials in revision history.
+		if ( self::contains_sensitive_data( $old_val ) ) {
+			return;
+		}
 
 		$this->record_change( $option, $old_val, null, 'deleted' );
 	}
@@ -128,11 +153,16 @@ class OptionListener implements Service {
 	/**
 	 * Checks whether an option should be ignored from revisions tracking.
 	 *
-	 * @param string $option Option name.
+	 * @param string     $option Option name.
+	 * @param mixed|null $value  Optional option value to inspect for embedded credentials.
 	 * @return bool
 	 */
-	public function should_ignore( string $option ): bool {
+	public function should_ignore( string $option, $value = null ): bool {
 		if ( function_exists( 'wp_installing' ) && wp_installing() ) {
+			return true;
+		}
+
+		if ( ! is_null( $value ) && self::contains_sensitive_data( $value ) ) {
 			return true;
 		}
 
@@ -209,6 +239,158 @@ class OptionListener implements Service {
 	}
 
 	/**
+	 * Checks whether an array key or object property name denotes a credential or secret.
+	 *
+	 * @param string $key   The key or property name.
+	 * @param mixed  $value The value associated with the key (optional).
+	 * @return bool True if the key represents sensitive credential data.
+	 */
+	public static function is_sensitive_key( string $key, $value = null ): bool {
+		$lower = strtolower( trim( $key ) );
+
+		// Skip non-string or boolean flags (e.g. 'pass' => true).
+		if ( is_bool( $value ) || is_int( $value ) || is_float( $value ) ) {
+			return false;
+		}
+
+		$patterns = array(
+			'api_key',
+			'apikey',
+			'api_secret',
+			'secret',
+			'secret_key',
+			'client_secret',
+			'password',
+			'pwd',
+			'token',
+			'access_token',
+			'refresh_token',
+			'auth_token',
+			'auth_key',
+			'private_key',
+			'license_key',
+			'credential',
+			'credentials',
+			'salt',
+			'webhook_secret',
+			'signing_secret',
+			'consumer_key',
+			'consumer_secret',
+			'smtp_pass',
+			'smtp_password',
+			'encryption_key',
+			'security_key',
+			'app_password',
+			'ai_connector',
+		);
+
+		foreach ( $patterns as $pattern ) {
+			if ( false !== strpos( $lower, $pattern ) ) {
+				return true;
+			}
+		}
+
+		// Exact match for 'pass' if value is a string (e.g. password).
+		if ( 'pass' === $lower && is_string( $value ) && '' !== $value ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Recursively checks whether an option value (scalar, array, or object)
+	 * contains embedded credentials, API keys, tokens, or secrets.
+	 *
+	 * @param mixed $value The option value to inspect.
+	 * @return bool True if sensitive credentials are found.
+	 */
+	public static function contains_sensitive_data( $value ): bool {
+		if ( is_null( $value ) || is_bool( $value ) || is_int( $value ) || is_float( $value ) ) {
+			return false;
+		}
+
+		if ( is_string( $value ) ) {
+			// Check for private key certificates.
+			if ( false !== strpos( $value, 'PRIVATE KEY' ) ) {
+				return true;
+			}
+
+			// Check if serialized PHP string.
+			if ( is_serialized( $value ) ) {
+				$unserialized = maybe_unserialize( $value );
+				if ( $unserialized !== $value ) {
+					return self::contains_sensitive_data( $unserialized );
+				}
+			}
+
+			// Check if JSON-encoded string containing sensitive data.
+			$trimmed = trim( $value );
+			if ( 0 === strpos( $trimmed, '{' ) || 0 === strpos( $trimmed, '[' ) ) {
+				$decoded = json_decode( $trimmed, true );
+				if ( is_array( $decoded ) && json_last_error() === JSON_ERROR_NONE ) {
+					return self::contains_sensitive_data( $decoded );
+				}
+			}
+
+			return false;
+		}
+
+		if ( is_object( $value ) ) {
+			$value = get_object_vars( $value );
+		}
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				if ( is_string( $k ) && self::is_sensitive_key( $k, $v ) ) {
+					if ( ! empty( $v ) ) {
+						return true;
+					}
+				}
+
+				if ( self::contains_sensitive_data( $v ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Recursively scrubs and redacts any sensitive credential keys in an array or object.
+	 *
+	 * @param mixed $value The value to sanitize.
+	 * @return mixed Sanitized value with credentials replaced by '[REDACTED]'.
+	 */
+	public static function redact_sensitive_data( $value ) {
+		if ( is_object( $value ) ) {
+			$vars = get_object_vars( $value );
+			foreach ( $vars as $k => $v ) {
+				if ( is_string( $k ) && self::is_sensitive_key( $k, $v ) ) {
+					$value->$k = '[REDACTED]';
+				} else {
+					$value->$k = self::redact_sensitive_data( $v );
+				}
+			}
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				if ( is_string( $k ) && self::is_sensitive_key( $k, $v ) ) {
+					$value[ $k ] = '[REDACTED]';
+				} else {
+					$value[ $k ] = self::redact_sensitive_data( $v );
+				}
+			}
+			return $value;
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Serializes and writes a revision record.
 	 *
 	 * @param string $option      Option name.
@@ -217,8 +399,15 @@ class OptionListener implements Service {
 	 * @param string $action_type Action type (updated, added, deleted).
 	 */
 	private function record_change( string $option, $old_val, $new_val, string $action_type ): void {
-		$old_serialized = is_null( $old_val ) ? null : maybe_serialize( $old_val );
-		$new_serialized = is_null( $new_val ) ? null : maybe_serialize( $new_val );
+		// Defense in depth: Never record any change containing sensitive credentials.
+		if ( self::contains_sensitive_data( $old_val ) || self::contains_sensitive_data( $new_val ) ) {
+			return;
+		}
+
+		$old_sanitized  = is_null( $old_val ) ? null : self::redact_sensitive_data( $old_val );
+		$new_sanitized  = is_null( $new_val ) ? null : self::redact_sensitive_data( $new_val );
+		$old_serialized = is_null( $old_sanitized ) ? null : maybe_serialize( $old_sanitized );
+		$new_serialized = is_null( $new_sanitized ) ? null : maybe_serialize( $new_sanitized );
 
 		$user_id = function_exists( 'get_current_user_id' ) ? get_current_user_id() : 0;
 		$user_ip = '';

@@ -105,6 +105,56 @@ class OptionListenerTest extends TestCase {
 		$listener->on_deleted_option( 'deprecated_opt' );
 	}
 
+	public function test_on_deleted_option_does_not_retain_embedded_credentials(): void {
+		$settings_with_secrets = array(
+			'merchant_id' => '12345',
+			'api_key'     => 'sk_live_very_secret_token_123',
+			'webhook_url' => 'https://example.com/webhook',
+		);
+
+		update_option( 'general_gateway_settings', $settings_with_secrets );
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldNotReceive( 'insert' );
+
+		$listener = new OptionListener( $repository );
+		$listener->on_delete_option( 'general_gateway_settings' );
+		delete_option( 'general_gateway_settings' );
+		$listener->on_deleted_option( 'general_gateway_settings' );
+	}
+
+	public function test_contains_sensitive_data_detects_credentials_in_arrays(): void {
+		$clean = array(
+			'color'   => 'blue',
+			'layout'  => 'grid',
+			'per_page'=> 10,
+		);
+		$this->assertFalse( OptionListener::contains_sensitive_data( $clean ) );
+
+		$with_api_key = array( 'site_id' => 1, 'api_key' => '12345' );
+		$this->assertTrue( OptionListener::contains_sensitive_data( $with_api_key ) );
+
+		$with_secret = array( 'client_secret' => 'secret_val' );
+		$this->assertTrue( OptionListener::contains_sensitive_data( $with_secret ) );
+
+		$with_password = array( 'smtp' => array( 'smtp_password' => 'mypass' ) );
+		$this->assertTrue( OptionListener::contains_sensitive_data( $with_password ) );
+
+		$with_token = array( 'auth' => array( 'access_token' => 'tok_987' ) );
+		$this->assertTrue( OptionListener::contains_sensitive_data( $with_token ) );
+	}
+
+	public function test_on_updated_option_ignores_settings_with_credentials(): void {
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldNotReceive( 'insert' );
+
+		$old_val = array( 'enabled' => 'no', 'secret' => 'old_secret' );
+		$new_val = array( 'enabled' => 'yes', 'secret' => 'new_secret' );
+
+		$listener = new OptionListener( $repository );
+		$listener->on_updated_option( 'payment_gateway_options', $old_val, $new_val );
+	}
+
 	public function test_on_updated_option_ignores_when_is_restoring(): void {
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldNotReceive( 'insert' );

@@ -194,4 +194,21 @@ class RollbackHandlerTest extends TestCase {
 		$handler = new RollbackHandler( $repository );
 		$this->assertFalse( $handler->rollback( 22 ) );
 	}
+
+	public function test_rollback_refuses_to_restore_sensitive_credentials(): void {
+		Functions\when( 'maybe_unserialize' )->returnArg();
+
+		$record              = new \stdClass();
+		$record->id          = 23;
+		$record->option_name = 'custom_settings';
+		$record->old_value   = array( 'api_key' => 'secret_123' );
+		$record->new_value   = array( 'api_key' => 'secret_456' );
+		$record->action_type = 'updated';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 23 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( $handler->rollback( 23 ) );
+	}
 }

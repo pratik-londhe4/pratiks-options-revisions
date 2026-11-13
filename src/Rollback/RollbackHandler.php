@@ -162,6 +162,11 @@ class RollbackHandler {
 		$old_raw     = $record->old_value;
 		$action_type = (string) $record->action_type;
 
+		// Refuse to restore any revision that contains sensitive credentials.
+		if ( ! is_null( $old_raw ) && OptionListener::contains_sensitive_data( maybe_unserialize( $old_raw ) ) ) {
+			return false;
+		}
+
 		OptionListener::$is_restoring = true;
 
 		try {
