@@ -44,7 +44,7 @@ class AbilitiesTest extends TestCase {
 	public function test_execute_rollback_triggers_handler(): void {
 		$record              = new \stdClass();
 		$record->id          = 7;
-		$record->option_name = 'active_plugins';
+		$record->option_name = 'blogname';
 
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldReceive( 'get_by_id' )->with( 7 )->andReturn( $record );
@@ -57,18 +57,11 @@ class AbilitiesTest extends TestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertTrue( $result['success'] );
-		$this->assertSame( 'active_plugins', $result['option_name'] );
+		$this->assertSame( 'blogname', $result['option_name'] );
 	}
 
-	public function test_can_rollback_denies_active_plugins_without_permission(): void {
-		Functions\when( 'current_user_can' )->alias(
-			function ( $cap ) {
-				if ( 'activate_plugins' === $cap ) {
-					return false;
-				}
-				return true;
-			}
-		);
+	public function test_can_rollback_denies_disallowed_options(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		$record              = new \stdClass();
 		$record->id          = 7;
@@ -93,10 +86,10 @@ class AbilitiesTest extends TestCase {
 		$this->assertTrue( $abilities->can_rollback( array( 'id' => 8 ) ) );
 	}
 
-	public function test_can_rollback_denies_stylesheet_without_switch_themes(): void {
+	public function test_can_rollback_denies_sidebars_widgets_without_edit_theme_options(): void {
 		Functions\when( 'current_user_can' )->alias(
 			function ( $cap ) {
-				if ( 'switch_themes' === $cap ) {
+				if ( 'edit_theme_options' === $cap ) {
 					return false;
 				}
 				return true;
@@ -105,7 +98,7 @@ class AbilitiesTest extends TestCase {
 
 		$record              = new \stdClass();
 		$record->id          = 9;
-		$record->option_name = 'stylesheet';
+		$record->option_name = 'sidebars_widgets';
 
 		$repository = Mockery::mock( RevisionRepository::class );
 		$repository->shouldReceive( 'get_by_id' )->with( 9 )->andReturn( $record );
@@ -114,15 +107,8 @@ class AbilitiesTest extends TestCase {
 		$this->assertFalse( $abilities->can_rollback( array( 'id' => 9 ) ) );
 	}
 
-	public function test_can_rollback_denies_prefixed_user_roles_without_promote_users(): void {
-		Functions\when( 'current_user_can' )->alias(
-			function ( $cap ) {
-				if ( 'promote_users' === $cap ) {
-					return false;
-				}
-				return true;
-			}
-		);
+	public function test_can_rollback_denies_prefixed_user_roles(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		$record              = new \stdClass();
 		$record->id          = 11;

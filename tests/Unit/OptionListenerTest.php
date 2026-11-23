@@ -22,6 +22,11 @@ class OptionListenerTest extends TestCase {
 		$listener = new OptionListener();
 
 		$this->assertTrue( $listener->should_ignore( 'cron' ) );
+		$this->assertTrue( $listener->should_ignore( 'active_plugins' ) );
+		$this->assertTrue( $listener->should_ignore( 'active_sitewide_plugins' ) );
+		$this->assertTrue( $listener->should_ignore( 'stylesheet' ) );
+		$this->assertTrue( $listener->should_ignore( 'template' ) );
+		$this->assertTrue( $listener->should_ignore( 'current_theme' ) );
 		$this->assertTrue( $listener->should_ignore( '_transient_feed_cache' ) );
 		$this->assertTrue( $listener->should_ignore( '_site_transient_update_plugins' ) );
 		$this->assertTrue( $listener->should_ignore( 'pratiks_options_revisions_db_version' ) );

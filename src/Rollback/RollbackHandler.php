@@ -34,21 +34,52 @@ class RollbackHandler {
 	}
 
 	/**
+	 * Options that must never be rolled back directly because modifying them via update_option
+	 * bypasses WordPress activation/deactivation hooks, theme switching routines, or role management.
+	 *
+	 * @var array<string>
+	 */
+	public const DISALLOWED_ROLLBACK_OPTIONS = array(
+		'active_plugins',
+		'active_sitewide_plugins',
+		'template',
+		'stylesheet',
+		'current_theme',
+		'theme_switched',
+		'wp_user_roles',
+		'recently_activated',
+		'uninstall_plugins',
+	);
+
+	/**
+	 * Checks whether an option is disallowed from rollback because it controls active plugins,
+	 * themes, or user roles, which must be handled through their dedicated WordPress APIs.
+	 *
+	 * @param string $option_name Option name.
+	 * @return bool True if disallowed, false otherwise.
+	 */
+	public static function is_disallowed_option( string $option_name ): bool {
+		if ( in_array( $option_name, self::DISALLOWED_ROLLBACK_OPTIONS, true ) ) {
+			return true;
+		}
+
+		if ( false !== strpos( $option_name, 'user_roles' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Maps sensitive option names to the WordPress capability required to modify them.
 	 *
 	 * @return array<string, string> Option name => required capability.
 	 */
 	private static function sensitive_option_capabilities(): array {
 		return array(
-			'active_plugins'          => 'activate_plugins',
-			'active_sitewide_plugins' => 'activate_plugins',
-			'stylesheet'              => 'switch_themes',
-			'template'                => 'switch_themes',
-			'current_theme'           => 'switch_themes',
-			'sidebars_widgets'        => 'edit_theme_options',
-			'theme_mods_*'            => 'edit_theme_options',
-			'widget_*'                => 'edit_theme_options',
-			'wp_user_roles'           => 'promote_users',
+			'sidebars_widgets' => 'edit_theme_options',
+			'theme_mods_*'     => 'edit_theme_options',
+			'widget_*'         => 'edit_theme_options',
 		);
 	}
 
@@ -73,26 +104,29 @@ class RollbackHandler {
 			}
 		}
 
-		// Check for user-roles options (wp_user_roles, or prefixed: wp_2_user_roles, etc.).
-		if ( false !== strpos( $option_name, 'user_roles' ) ) {
-			return 'promote_users';
-		}
-
 		return null;
 	}
 
 	/**
 	 * Checks whether the current user has permission to roll back a given option.
 	 *
-	 * Requires manage_options for all options. Additionally requires the specific
-	 * capability mapped to the option (e.g. activate_plugins for active_plugins,
-	 * switch_themes for theme options, promote_users for user-role options).
-	 * On multisite, requires manage_network_plugins for network-wide plugin options.
+	 * Lifecycle-managed options (active plugins, active themes, user roles) are always
+	 * disallowed from direct rollback because direct update_option calls bypass WordPress
+	 * activation/deactivation hooks and theme switching routines.
+	 *
+	 * Requires manage_options for all options. Additionally requires option-specific capabilities
+	 * mapped to sensitive options (e.g. edit_theme_options for sidebars_widgets or widgets).
+	 * On multisite, requires manage_network_options for network site URLs.
 	 *
 	 * @param string $option_name Option name.
 	 * @return bool True if allowed, false otherwise.
 	 */
 	public static function can_user_rollback_option( string $option_name ): bool {
+		// Disallow lifecycle-managed options from direct rollback.
+		if ( self::is_disallowed_option( $option_name ) ) {
+			return false;
+		}
+
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return true;
 		}
@@ -107,11 +141,8 @@ class RollbackHandler {
 			return false;
 		}
 
-		// On multisite, network-wide plugin and URL options require super-admin.
+		// On multisite, network-wide URL options require super-admin.
 		if ( is_multisite() ) {
-			if ( 'active_sitewide_plugins' === $option_name && ! current_user_can( 'manage_network_plugins' ) ) {
-				return false;
-			}
 			if ( in_array( $option_name, array( 'siteurl', 'home' ), true ) && ! current_user_can( 'manage_network_options' ) ) {
 				return false;
 			}
@@ -155,7 +186,8 @@ class RollbackHandler {
 
 		$option_name = (string) $record->option_name;
 
-		if ( ! self::can_user_rollback_option( $option_name ) ) {
+		// Never restore lifecycle-managed options (plugins, themes, roles) directly via update_option.
+		if ( self::is_disallowed_option( $option_name ) || ! self::can_user_rollback_option( $option_name ) ) {
 			return false;
 		}
 

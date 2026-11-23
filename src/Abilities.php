@@ -210,7 +210,7 @@ class Abilities implements Service {
 	/**
 	 * Permission check for rollback ability.
 	 *
-	 * Requires manage_options in general, and activate_plugins if rolling back active_plugins.
+	 * Requires manage_options in general and verifies the option is permissible for rollback.
 	 *
 	 * @param array<string, mixed>|null $input Optional ability input data.
 	 * @return bool

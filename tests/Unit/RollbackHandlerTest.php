@@ -121,15 +121,8 @@ class RollbackHandlerTest extends TestCase {
 		$this->assertSame( 'current_value', get_option( 'recreated_option' ) );
 	}
 
-	public function test_rollback_active_plugins_requires_activate_plugins_capability(): void {
-		Functions\when( 'current_user_can' )->alias(
-			function ( $cap ) {
-				if ( 'activate_plugins' === $cap ) {
-					return false;
-				}
-				return true;
-			}
-		);
+	public function test_rollback_disallows_active_plugins(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		$record              = new \stdClass();
 		$record->id          = 20;
@@ -142,20 +135,12 @@ class RollbackHandlerTest extends TestCase {
 		$repository->shouldReceive( 'get_by_id' )->with( 20 )->andReturn( $record );
 
 		$handler = new RollbackHandler( $repository );
-		$result  = $handler->rollback( 20 );
-
-		$this->assertFalse( $result );
+		$this->assertFalse( RollbackHandler::can_user_rollback_option( 'active_plugins' ) );
+		$this->assertFalse( $handler->rollback( 20 ) );
 	}
 
-	public function test_rollback_stylesheet_requires_switch_themes_capability(): void {
-		Functions\when( 'current_user_can' )->alias(
-			function ( $cap ) {
-				if ( 'switch_themes' === $cap ) {
-					return false;
-				}
-				return true;
-			}
-		);
+	public function test_rollback_disallows_stylesheet_and_theme_options(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		$record              = new \stdClass();
 		$record->id          = 21;
@@ -168,18 +153,12 @@ class RollbackHandlerTest extends TestCase {
 		$repository->shouldReceive( 'get_by_id' )->with( 21 )->andReturn( $record );
 
 		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( RollbackHandler::can_user_rollback_option( 'stylesheet' ) );
 		$this->assertFalse( $handler->rollback( 21 ) );
 	}
 
-	public function test_rollback_prefixed_user_roles_requires_promote_users_capability(): void {
-		Functions\when( 'current_user_can' )->alias(
-			function ( $cap ) {
-				if ( 'promote_users' === $cap ) {
-					return false;
-				}
-				return true;
-			}
-		);
+	public function test_rollback_disallows_prefixed_user_roles(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		$record              = new \stdClass();
 		$record->id          = 22;
@@ -192,7 +171,33 @@ class RollbackHandlerTest extends TestCase {
 		$repository->shouldReceive( 'get_by_id' )->with( 22 )->andReturn( $record );
 
 		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( RollbackHandler::can_user_rollback_option( 'wp_2_user_roles' ) );
 		$this->assertFalse( $handler->rollback( 22 ) );
+	}
+
+	public function test_rollback_sidebars_widgets_requires_edit_theme_options_capability(): void {
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				if ( 'edit_theme_options' === $cap ) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		$record              = new \stdClass();
+		$record->id          = 24;
+		$record->option_name = 'sidebars_widgets';
+		$record->old_value   = serialize( array( 'sidebar-1' => array() ) );
+		$record->new_value   = serialize( array() );
+		$record->action_type = 'updated';
+
+		$repository = Mockery::mock( RevisionRepository::class );
+		$repository->shouldReceive( 'get_by_id' )->with( 24 )->andReturn( $record );
+
+		$handler = new RollbackHandler( $repository );
+		$this->assertFalse( RollbackHandler::can_user_rollback_option( 'sidebars_widgets' ) );
+		$this->assertFalse( $handler->rollback( 24 ) );
 	}
 
 	public function test_rollback_refuses_to_restore_sensitive_credentials(): void {
